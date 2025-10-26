@@ -49,7 +49,7 @@ const SuggestionsList = ({ suggestions }: { suggestions: Suggestion[] }) => {
           className="p-4 bg-blue-950 shadow-md text-white font-semibold rounded-md hover:scale-105 active:scale-95 transition-all duration-300"
           disabled={!content}
         >
-          Instert
+          Insert
         </button>
       </form>
       <div className="bg-black h-0.25 sm:w-1/2 w-full mt-4" />
