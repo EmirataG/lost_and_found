@@ -1,16 +1,22 @@
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
-
-import SuggestionsList from "./components/SuggestionsList";
-import type { Suggestion } from "@/types";
-
 import PostForm from "./components/PostFrom";
+import { redirect } from "next/navigation";
 
 const Page = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error || !user) {
+    redirect("/login");
+  }
+  const userData = user.user_metadata;
+  console.log(userData);
 
   return (
     <div className="p-4 min-h-screen bg-blue-100">
+      <p className="text-center">Hello, {userData.name}</p>
       <PostForm />
     </div>
   );
