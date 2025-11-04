@@ -7,8 +7,7 @@ import type { Suggestion } from "@/types";
 import PostForm from "./components/PostFrom";
 
 const Page = async () => {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createClient();
 
   return (
     <div className="p-4 min-h-screen bg-blue-100">
