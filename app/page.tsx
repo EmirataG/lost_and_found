@@ -17,7 +17,7 @@ const Page = async () => {
   return (
     <div className="p-4 min-h-screen bg-blue-100">
       <p className="text-center">Hello, {userData.name}</p>
-      <PostForm />
+      <PostForm userId={user.id} />
     </div>
   );
 };
