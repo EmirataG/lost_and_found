@@ -15,10 +15,7 @@ export async function POST(request: Request) {
     const when = formData.get("when") as string;
     const where = formData.get("where") as string;
     const postType = formData.get("type") as string;
-    // const userId = formData.get("user_id") as string;
-
-    // const postType = "lost";
-    const userId = "1da4a0fe-5cd8-418b-93f0-5d38030d90d9";
+    const userId = formData.get("user_id") as string;
 
     if (!photos || !userId) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });

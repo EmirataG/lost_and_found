@@ -15,3 +15,5 @@ export type Photo = {
   post_id: string;
   url: string;
 };
+
+export type PostType = "lost" | "found";

@@ -16,6 +16,28 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { id, email, user_metadata } = user;
+        const name = user_metadata.name;
+        const avatar_url = user_metadata.avatar_url;
+        console.log("UPSERTING");
+        const { error: upsertError } = await supabase.from("users").upsert(
+          {
+            id: id,
+            name: name,
+            email: email,
+            avatat_url: avatar_url,
+          },
+          { onConflict: "id" }
+        );
+
+        if (upsertError) {
+          console.error(`Error saving user! ${upsertError}`);
+        }
+      }
       return NextResponse.redirect(`${origin}/`);
     }
   }

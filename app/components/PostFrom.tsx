@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
+import { type PostType } from "@/types";
+import PostTypeToggle from "./PostTypeToggle";
 
 const PostForm = ({ userId }: { userId: string }) => {
-  const [postType, setPostType] = useState<"lost" | "found">("lost");
+  const [postType, setPostType] = useState<PostType>("lost");
   const isLost = postType === "lost";
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [when, setWhen] = useState("");
@@ -42,6 +43,7 @@ const PostForm = ({ userId }: { userId: string }) => {
         className="flex flex-col p-4 items-center bg-white rounded-md shadow-md w-3xl"
         onSubmit={handleSubmit}
       >
+        <PostTypeToggle isLost={isLost} changePostType={setPostType} />
         <input name="type" value={postType} hidden readOnly />
         <input name="user_id" value={userId} hidden readOnly />
         <div className="flex flex-col gap-2 items-stretch w-full pb-6">
@@ -102,7 +104,10 @@ const PostForm = ({ userId }: { userId: string }) => {
             required
           />
         </div>
-        <button className="bg-blue-400 py-2 px-4 rounded-md" type="submit">
+        <button
+          className="yale-blue-bg text-white py-2 px-4 rounded-md"
+          type="submit"
+        >
           Upload
         </button>
       </form>
