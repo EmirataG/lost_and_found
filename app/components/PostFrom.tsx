@@ -1,9 +1,17 @@
 "use client";
 import { useState } from "react";
 import { type PostType } from "@/types";
+import { FaArrowAltCircleLeft } from "react-icons/fa";
+
 import PostTypeToggle from "./PostTypeToggle";
 
-const PostForm = ({ userId }: { userId: string }) => {
+const PostForm = ({
+  userId,
+  closeForm,
+}: {
+  userId: string;
+  closeForm: () => void;
+}) => {
   const [postType, setPostType] = useState<PostType>("lost");
   const isLost = postType === "lost";
   const [title, setTitle] = useState("");
@@ -11,8 +19,10 @@ const PostForm = ({ userId }: { userId: string }) => {
   const [when, setWhen] = useState("");
   const [where, setWhere] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setIsLoading(true);
     e.preventDefault();
 
     try {
@@ -34,15 +44,27 @@ const PostForm = ({ userId }: { userId: string }) => {
       setWhen("");
       setWhere("");
       setPhotos([]);
+      closeForm();
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="absolute top-0 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20">
       <form
-        className="flex flex-col p-4 items-center bg-white rounded-md shadow-md w-3xl"
+        className="flex flex-col p-4 gap-4 items-center bg-white rounded-md shadow-lg w-3xl"
         onSubmit={handleSubmit}
       >
+        <div className="w-full flex justify-between">
+          <FaArrowAltCircleLeft
+            size={36}
+            color="#03346a"
+            className="transition-all duration-400 hover:scale-105 active:scale-95"
+            onClick={closeForm}
+          />
+          <h1 className="text-3xl">Create a New Post...</h1>
+          <FaArrowAltCircleLeft visibility="hidden" />
+        </div>
         <PostTypeToggle isLost={isLost} changePostType={setPostType} />
         <input name="type" value={postType} hidden readOnly />
         <input name="user_id" value={userId} hidden readOnly />
@@ -105,10 +127,11 @@ const PostForm = ({ userId }: { userId: string }) => {
           />
         </div>
         <button
-          className="yale-blue-bg text-white py-2 px-4 rounded-md"
+          disabled={isLoading}
+          className="transition-all duration-400 hover:scale-105 active:scale-95 yale-blue-bg text-white py-2 px-4 rounded-md"
           type="submit"
         >
-          Upload
+          {isLoading ? "Loading..." : "Upload"}
         </button>
       </form>
     </div>
