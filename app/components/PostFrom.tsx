@@ -32,22 +32,20 @@ const PostForm = ({
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    setIsLoading(true);
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const formData = new FormData(e.currentTarget);
-      const response = await fetch("api/upload-post", {
+      const response = await fetch("/api/upload-post", {
         method: "POST",
         body: formData,
       });
 
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Upload faild");
-      }
+      if (!response.ok) throw new Error(data.error || "Upload failed");
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
     } finally {
       setTitle("");
       setDescription("");
@@ -60,100 +58,96 @@ const PostForm = ({
   }
 
   return (
-    <div className="absolute top-0 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
       <form
-        className="flex flex-col p-4 gap-4 items-center bg-white rounded-md shadow-lg w-3xl"
         onSubmit={handleSubmit}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col gap-6 animate-fade-in"
       >
-        <div className="w-full flex justify-between">
-          {isConfirmShown ? (
-            <button className="flex gap-2 yale-blue-bg rounded-lg">
-              <FaArrowAltCircleLeft
-                size={36}
-                color="#03346a"
-                className="transition-all duration-400 hover:scale-105 active:scale-95"
-                onClick={closeForm}
-              />
-              <p>Sure?</p>
-            </button>
-          ) : (
-            <FaArrowAltCircleLeft
-              size={36}
-              color="#03346a"
-              className="transition-all duration-400 hover:scale-105 active:scale-95"
-              onClick={handleBack}
-            />
-          )}
-          <h1 className="text-3xl">Create a New Post...</h1>
-          <FaArrowAltCircleLeft visibility="hidden" />
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <FaArrowAltCircleLeft
+            size={32}
+            className="text-blue-900 cursor-pointer transition-transform hover:scale-110 active:scale-95"
+            onClick={closeForm}
+          />
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center flex-1">
+            {isLost ? "Report a Lost Item" : "Report a Found Item"}
+          </h1>
+          <div className="w-8" /> {/* placeholder to balance flex */}
         </div>
+
+        {/* Post Type Toggle */}
         <PostTypeToggle isLost={isLost} changePostType={setPostType} />
         <input name="type" value={postType} hidden readOnly />
         <input name="user_id" value={userId} hidden readOnly />
-        <div className="flex flex-col gap-2 items-stretch w-full pb-6">
-          <label htmlFor="title">
-            {isLost ? "What did you lose?" : "What did you find"}
+
+        {/* Form Inputs */}
+        <div className="flex flex-col gap-4">
+          <label className="font-medium text-gray-700">
+            {isLost ? "What did you lose?" : "What did you find?"}
           </label>
           <input
-            className="border border-black"
             name="title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
-          <label htmlFor="description">Describe it as best as you can.</label>
+
+          <label className="font-medium text-gray-700">Describe it as best as you can</label>
           <textarea
-            className="border border-black"
             name="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            className="w-full border border-gray-300 rounded-lg p-3 h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
-          <label htmlFor="photo">Photos can help a lot!</label>
+
+          <label className="font-medium text-gray-700">Photos can help a lot!</label>
           <input
-            className="border border-black"
             name="photo"
             type="file"
             accept="image/*"
+            multiple
             onChange={(e) =>
               setPhotos(e.target.files ? Array.from(e.target.files) : [])
             }
-            multiple
+            className="w-full text-gray-700"
           />
-          <label htmlFor="where">
-            {isLost
-              ? "Where do you recall last seeing it?"
-              : "Where did you find it?"}
+
+          <label className="font-medium text-gray-700">
+            {isLost ? "Where did you last see it?" : "Where did you find it?"}
           </label>
           <input
-            className="border border-black"
             name="where"
             type="text"
             value={where}
             onChange={(e) => setWhere(e.target.value)}
             required
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
-          <label htmlFor="when">
-            {isLost
-              ? "When do you recall last seeing it?"
-              : "When did you find it"}
+
+          <label className="font-medium text-gray-700">
+            {isLost ? "When did you last see it?" : "When did you find it?"}
           </label>
           <input
-            className="border border-black"
             name="when"
             type="text"
             value={when}
             onChange={(e) => setWhen(e.target.value)}
             required
+            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
         </div>
+
+        {/* Submit */}
         <button
-          disabled={isLoading}
-          className="transition-all duration-400 hover:scale-105 active:scale-95 yale-blue-bg text-white py-2 px-4 rounded-md"
           type="submit"
+          disabled={isLoading}
+          className="w-full py-3 bg-blue-900 text-white rounded-xl font-semibold text-lg transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
         >
-          {isLoading ? "Loading..." : "Upload"}
+          {isLoading ? "Uploading..." : "Upload"}
         </button>
       </form>
     </div>
