@@ -20,7 +20,7 @@ const PostTypeToggle = ({
           }
         }}
       >
-        I lost something 😞
+        I lost something
       </button>
       <button
         className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
@@ -32,7 +32,7 @@ const PostTypeToggle = ({
           }
         }}
       >
-        I found something 🎉
+        I found something
       </button>
     </div>
   );
