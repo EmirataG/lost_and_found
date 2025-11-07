@@ -63,7 +63,8 @@ const PostCard = ({ post, photos }: { post: Post; photos: string[] }) => (
 
 
 const MainScreen = ({ userId }: { userId: string }) => {
-  const [postFormOpen, setPostFormOpen] = useState(false);
+  const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"map" | "board">("map");
   const [posts, setPosts] = useState<Post[]>([]);
   const [photos, setPhotos] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
@@ -106,9 +107,9 @@ const MainScreen = ({ userId }: { userId: string }) => {
     }
 
     fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    // const interval = setInterval(fetchData, 10000);
+    // return () => clearInterval(interval);
+  }, [activeTab]);
 
   return (
     <div className="flex h-screen">

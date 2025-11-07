@@ -19,7 +19,17 @@ const PostForm = ({
   const [when, setWhen] = useState("");
   const [where, setWhere] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isConfirmShown, setIsConfirmShown] = useState<boolean>(false);
+
+  function handleBack() {
+    if (title != "" || description != "" || when != "" || where != "") {
+      setIsConfirmShown(true);
+      console.log("HERE");
+    } else {
+      closeForm();
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
