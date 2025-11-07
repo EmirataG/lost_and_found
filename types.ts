@@ -3,10 +3,17 @@ export type User = {
   name: string;
   email: string;
   created_at: string;
-}
+};
 
 export type Suggestion = {
   id: string;
   content: string;
   created_at: string;
-}
+};
+
+export type Photo = {
+  post_id: string;
+  url: string;
+};
+
+export type PostType = "lost" | "found";

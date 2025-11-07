@@ -1,32 +1,28 @@
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
-
-import SuggestionsList from "./components/SuggestionsList";
-import type { Suggestion } from "@/types";
+import PostForm from "./components/PostFrom";
+import { redirect } from "next/navigation";
+import MainScreen from "./components/MainScreen";
 
 const Page = async () => {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error || !user) {
+    redirect("/login");
+  }
+  const userData = user.user_metadata;
+  console.log(userData);
 
-  const { data } = await supabase
-    .from("suggestions")
-    .select()
-    .overrideTypes<Array<Suggestion>, { merge: false }>();
+  // return (
+  //   <div className="p-4 min-h-screen bg-blue-100">
+  //     <p className="text-center">Hello, {userData.name}</p>
+  //     <PostForm userId={user.id} />
+  //   </div>
+  // );
 
-  return (
-    <div className="p-4 min-h-screen bg-blue-100">
-      <header className="text-center mb-4 p-4">
-        <h2 className="text-2xl font-semibold">
-          Thoughts on Next.js + Supabase + Tailwind?
-        </h2>
-        <p className="text-center">
-          Also, let's meet this week and plan doing some work on the project
-          over the break!
-        </p>
-      </header>
-      <SuggestionsList suggestions={data ? data : []} />
-    </div>
-  );
+  return <MainScreen userId={user.id} />;
 };
 
 export default Page;

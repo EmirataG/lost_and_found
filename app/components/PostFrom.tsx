@@ -1,0 +1,163 @@
+"use client";
+import { useState } from "react";
+import { type PostType } from "@/types";
+import { FaArrowAltCircleLeft } from "react-icons/fa";
+
+import PostTypeToggle from "./PostTypeToggle";
+
+const PostForm = ({
+  userId,
+  closeForm,
+}: {
+  userId: string;
+  closeForm: () => void;
+}) => {
+  const [postType, setPostType] = useState<PostType>("lost");
+  const isLost = postType === "lost";
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [when, setWhen] = useState("");
+  const [where, setWhere] = useState("");
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isConfirmShown, setIsConfirmShown] = useState<boolean>(false);
+
+  function handleBack() {
+    if (title != "" || description != "" || when != "" || where != "") {
+      setIsConfirmShown(true);
+      console.log("HERE");
+    } else {
+      closeForm();
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setIsLoading(true);
+    e.preventDefault();
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const response = await fetch("api/upload-post", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Upload faild");
+      }
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setTitle("");
+      setDescription("");
+      setWhen("");
+      setWhere("");
+      setPhotos([]);
+      closeForm();
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="absolute top-0 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20">
+      <form
+        className="flex flex-col p-4 gap-4 items-center bg-white rounded-md shadow-lg w-3xl"
+        onSubmit={handleSubmit}
+      >
+        <div className="w-full flex justify-between">
+          {isConfirmShown ? (
+            <button className="flex gap-2 yale-blue-bg rounded-lg">
+              <FaArrowAltCircleLeft
+                size={36}
+                color="#03346a"
+                className="transition-all duration-400 hover:scale-105 active:scale-95"
+                onClick={closeForm}
+              />
+              <p>Sure?</p>
+            </button>
+          ) : (
+            <FaArrowAltCircleLeft
+              size={36}
+              color="#03346a"
+              className="transition-all duration-400 hover:scale-105 active:scale-95"
+              onClick={handleBack}
+            />
+          )}
+          <h1 className="text-3xl">Create a New Post...</h1>
+          <FaArrowAltCircleLeft visibility="hidden" />
+        </div>
+        <PostTypeToggle isLost={isLost} changePostType={setPostType} />
+        <input name="type" value={postType} hidden readOnly />
+        <input name="user_id" value={userId} hidden readOnly />
+        <div className="flex flex-col gap-2 items-stretch w-full pb-6">
+          <label htmlFor="title">
+            {isLost ? "What did you lose?" : "What did you find"}
+          </label>
+          <input
+            className="border border-black"
+            name="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+          <label htmlFor="description">Describe it as best as you can.</label>
+          <textarea
+            className="border border-black"
+            name="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <label htmlFor="photo">Photos can help a lot!</label>
+          <input
+            className="border border-black"
+            name="photo"
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              setPhotos(e.target.files ? Array.from(e.target.files) : [])
+            }
+            multiple
+          />
+          <label htmlFor="where">
+            {isLost
+              ? "Where do you recall last seeing it?"
+              : "Where did you find it?"}
+          </label>
+          <input
+            className="border border-black"
+            name="where"
+            type="text"
+            value={where}
+            onChange={(e) => setWhere(e.target.value)}
+            required
+          />
+          <label htmlFor="when">
+            {isLost
+              ? "When do you recall last seeing it?"
+              : "When did you find it"}
+          </label>
+          <input
+            className="border border-black"
+            name="when"
+            type="text"
+            value={when}
+            onChange={(e) => setWhen(e.target.value)}
+            required
+          />
+        </div>
+        <button
+          disabled={isLoading}
+          className="transition-all duration-400 hover:scale-105 active:scale-95 yale-blue-bg text-white py-2 px-4 rounded-md"
+          type="submit"
+        >
+          {isLoading ? "Loading..." : "Upload"}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default PostForm;
