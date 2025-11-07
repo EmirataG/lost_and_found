@@ -20,6 +20,16 @@ const PostForm = ({
   const [where, setWhere] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isConfirmShown, setIsConfirmShown] = useState<boolean>(false);
+
+  function handleBack() {
+    if (title != "" || description != "" || when != "" || where != "") {
+      setIsConfirmShown(true);
+      console.log("HERE");
+    } else {
+      closeForm();
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     setIsLoading(true);
@@ -56,12 +66,24 @@ const PostForm = ({
         onSubmit={handleSubmit}
       >
         <div className="w-full flex justify-between">
-          <FaArrowAltCircleLeft
-            size={36}
-            color="#03346a"
-            className="transition-all duration-400 hover:scale-105 active:scale-95"
-            onClick={closeForm}
-          />
+          {isConfirmShown ? (
+            <button className="flex gap-2 yale-blue-bg rounded-lg">
+              <FaArrowAltCircleLeft
+                size={36}
+                color="#03346a"
+                className="transition-all duration-400 hover:scale-105 active:scale-95"
+                onClick={closeForm}
+              />
+              <p>Sure?</p>
+            </button>
+          ) : (
+            <FaArrowAltCircleLeft
+              size={36}
+              color="#03346a"
+              className="transition-all duration-400 hover:scale-105 active:scale-95"
+              onClick={handleBack}
+            />
+          )}
           <h1 className="text-3xl">Create a New Post...</h1>
           <FaArrowAltCircleLeft visibility="hidden" />
         </div>

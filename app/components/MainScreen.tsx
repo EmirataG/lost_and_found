@@ -23,13 +23,13 @@ type Photo = {
 
 const MainScreen = ({ userId }: { userId: string }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'map' | 'board'>('map');
+  const [activeTab, setActiveTab] = useState<"map" | "board">("map");
   const [posts, setPosts] = useState<Post[]>([]);
   const [photos, setPhotos] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (activeTab !== 'board') return;
+    if (activeTab !== "board") return;
 
     const supabase = createClient();
     async function fetchData() {
@@ -64,31 +64,31 @@ const MainScreen = ({ userId }: { userId: string }) => {
       }
       setLoading(false);
     }
-    
+
     fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(fetchData, 10000);
+    // return () => clearInterval(interval);
   }, [activeTab]);
 
   return (
     <div className="flex flex-col h-screen">
       <div className="flex justify-center space-x-4 p-4 bg-white shadow">
         <button
-          onClick={() => setActiveTab('map')}
+          onClick={() => setActiveTab("map")}
           className={`px-4 py-2 rounded-lg ${
-            activeTab === 'map' 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-100 text-gray-700'
+            activeTab === "map"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-700"
           }`}
         >
           Post
         </button>
         <button
-          onClick={() => setActiveTab('board')}
+          onClick={() => setActiveTab("board")}
           className={`px-4 py-2 rounded-lg ${
-            activeTab === 'board' 
-              ? 'bg-blue-500 text-white' 
-              : 'bg-gray-100 text-gray-700'
+            activeTab === "board"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-700"
           }`}
         >
           Live Request Board
@@ -96,11 +96,14 @@ const MainScreen = ({ userId }: { userId: string }) => {
       </div>
 
       <div className="flex-1 relative">
-        {activeTab === 'map' ? (
+        {activeTab === "map" ? (
           <>
             <SideMenu openForm={() => setPostFormOpen(true)} />
             {postFormOpen && (
-              <PostForm userId={userId} closeForm={() => setPostFormOpen(false)} />
+              <PostForm
+                userId={userId}
+                closeForm={() => setPostFormOpen(false)}
+              />
             )}
           </>
         ) : (
