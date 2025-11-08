@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         description: description,
         when: when,
         where: where,
-        ressolved: false,
+        resolved: false,
         type: postType,
       })
       .select()

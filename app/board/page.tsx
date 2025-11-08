@@ -1,22 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-
-type Post = {
-  id: number;
-  user_id: string;
-  title: string;
-  description: string;
-  when: string;
-  where: string;
-  ressolved: boolean;
-  type: string;
-};
-
-type Photo = {
-  post_id: number;
-  url: string;
-};
+import { type Post, type Photo } from "@/types";
 
 export default function BoardPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -66,7 +51,9 @@ export default function BoardPage() {
 
   return (
     <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
-      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 24 }}>Lost Items Board</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 24 }}>
+        Lost Items Board
+      </h1>
       {loading ? (
         <p>Loading...</p>
       ) : posts.length === 0 ? (
@@ -87,22 +74,37 @@ export default function BoardPage() {
               <h2 style={{ margin: 0 }}>{post.title}</h2>
               <p style={{ margin: "8px 0" }}>{post.description}</p>
               <div style={{ color: "#555", fontSize: 14 }}>
-                <span>When: {post.when}</span> | <span>Where: {post.where}</span>
+                <span>When: {post.when}</span> |{" "}
+                <span>Where: {post.where}</span>
               </div>
               {photos[post.id] && photos[post.id].length > 0 && (
-                <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    marginTop: 12,
+                    display: "flex",
+                    gap: 8,
+                    flexWrap: "wrap",
+                  }}
+                >
                   {photos[post.id].map((url, idx) => (
                     <img
                       key={idx}
                       src={url}
                       alt="Lost item photo"
-                      style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 6 }}
+                      style={{
+                        width: 120,
+                        height: 120,
+                        objectFit: "cover",
+                        borderRadius: 6,
+                      }}
                     />
                   ))}
                 </div>
               )}
-              {post.ressolved && (
-                <div style={{ color: "green", fontWeight: 600, marginTop: 8 }}>Resolved</div>
+              {post.resolved && (
+                <div style={{ color: "green", fontWeight: 600, marginTop: 8 }}>
+                  Resolved
+                </div>
               )}
             </li>
           ))}
