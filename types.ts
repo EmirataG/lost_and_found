@@ -26,10 +26,4 @@ export type Photo = {
   url: string;
 };
 
-export type Suggestion = {
-  id: string;
-  content: string;
-  created_at: string;
-};
-
 export type PostType = "lost" | "found";
