@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Lost @ Yale**
 
-## Getting Started
+_Lost @ Yale_ is a simple platform for Yale students to report lost and found items on campus. Users can log in, post items, browse the board, and contact each other when items are found.
 
-First, run the development server:
+This is the **MVP** version of the application.
+
+---
+
+## **Development Setup**
+
+### **1. Clone the Repository**
+
+```bash
+git clone <repository-url>
+cd lost-at-yale
+```
+
+### **2. Install Dependencies**
+
+```bash
+npm install
+```
+
+### **3. Create `.env.local`**
+
+You must manually create a `.env.local` file in the project root.
+
+This file stores your **Firebase + app environment variables**.
+It is not shared publicly.
+
+Example structure (values are placeholders):
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+### **4. Run the App (Important)**
+
+The app **must run on port 3000** during development.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If another process is using port 3000, **stop it first** — the app relies on this exact port during OAuth login.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## **Authentication**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app supports **Google Sign-In**.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- At MVP stage, **any Google account** can log in.
+- Later, we will restrict login to **@yale.edu** email addresses only.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## **Features**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **1. Create a Post (Lost or Found)**
+
+Users can submit a post describing an item, including:
+
+- Whether it is **Lost** or **Found**
+- **Title and description**
+- **Location and date**
+- **Multiple images** (photos are uploaded and displayed on the card)
+
+### **2. Lost/Found Board**
+
+All active posts appear on the main board:
+
+- **Lost items** are highlighted in red
+- **Found items** are highlighted in green
+- Posts update **in real time** when status changes
+
+### **3. Contact the User Who Made a Given Post**
+
+Every post includes a **contact option**:
+
+- If you found something someone lost → you can email the original poster
+- If someone found what _you_ lost → you can claim it
+- Future feature: In-app messaging
