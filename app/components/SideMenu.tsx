@@ -2,15 +2,21 @@
 
 const SideMenu = ({ openForm }: { openForm: () => void }) => {
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg flex flex-col p-6 space-y-4">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Menu</h2>
+    <aside className="w-64 bg-linear-to-b from-yaleBlue to-blue-400 text-white p-6 flex flex-col items-start space-y-6 shadow-lg">
+      <h2 className="text-xl font-bold mb-4">Menu</h2>
       <button
-        onClick={openForm}
-        className="w-full py-3 px-4 bg-blue-900 text-white font-semibold rounded-xl shadow hover:bg-blue-800 transition-colors active:scale-95"
+        onClick={() => openForm()}
+        className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition"
       >
-        + New Post
+        New Post
       </button>
-    </div>
+      <button
+        onClick={() => console.log("Show your posts")}
+        className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition"
+      >
+        Your Posts
+      </button>
+    </aside>
   );
 };
 

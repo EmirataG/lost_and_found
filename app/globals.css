@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-yaleBlue: #03346a;
+}
+
 .yale-blue-bg {
   background-color: #03346a;
 }

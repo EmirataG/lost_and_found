@@ -25,7 +25,6 @@ const PostForm = ({
   function handleBack() {
     if (title != "" || description != "" || when != "" || where != "") {
       setIsConfirmShown(true);
-      console.log("HERE");
     } else {
       closeForm();
     }
@@ -58,13 +57,13 @@ const PostForm = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
+    <div className="absolute top-0 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col gap-6 animate-fade-in"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col items-center gap-4"
       >
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <FaArrowAltCircleLeft
             size={32}
             className="text-blue-900 cursor-pointer transition-transform hover:scale-110 active:scale-95"
@@ -78,11 +77,11 @@ const PostForm = ({
 
         {/* Post Type Toggle */}
         <PostTypeToggle isLost={isLost} changePostType={setPostType} />
-        <input name="type" value={postType} hidden readOnly />
-        <input name="user_id" value={userId} hidden readOnly />
 
         {/* Form Inputs */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2 w-full">
+          <input name="type" value={postType} type="hidden" readOnly />
+          <input name="user_id" value={userId} type="hidden" readOnly />
           <label className="font-medium text-gray-700">
             {isLost ? "What did you lose?" : "What did you find?"}
           </label>
@@ -95,7 +94,9 @@ const PostForm = ({
             className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
 
-          <label className="font-medium text-gray-700">Describe it as best as you can</label>
+          <label className="font-medium text-gray-700">
+            Describe it as best as you can
+          </label>
           <textarea
             name="description"
             value={description}
@@ -104,7 +105,9 @@ const PostForm = ({
             className="w-full border border-gray-300 rounded-lg p-3 h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
 
-          <label className="font-medium text-gray-700">Photos can help a lot!</label>
+          <label className="font-medium text-gray-700">
+            Photos can help a lot!
+          </label>
           <input
             name="photo"
             type="file"
@@ -145,7 +148,7 @@ const PostForm = ({
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 bg-blue-900 text-white rounded-xl font-semibold text-lg transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="bg-yaleBlue px-4 py-2 text-white rounded-xl font-semibold text-lg transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
         >
           {isLoading ? "Uploading..." : "Upload"}
         </button>

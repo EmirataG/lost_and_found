@@ -2,69 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import PostCard from "./PostCard";
 import PostForm from "./PostFrom";
+import SideMenu from "./SideMenu";
 import { createClient } from "@/utils/supabase/client";
+import BoardHeader from "./BoardHeader";
 
-type Post = {
-  id: number;
-  user_id: string;
-  title: string;
-  description: string;
-  when: string;
-  where: string;
-  ressolved: boolean;
-  type: string;
-};
+import yaleLogo from "@/public/images/yale_logo.png";
 
-type Photo = {
-  post_id: number;
-  url: string;
-};
-
-const PostCard = ({ post, photos }: { post: Post; photos: string[] }) => (
-  <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-300 overflow-hidden space-y-4">
-    {/* Photos Section */}
-    {photos.length > 0 && (
-      <div className="flex flex-col gap-2">
-        {photos.map((url, idx) => (
-          <Image
-            key={idx}
-            src={url}
-            alt={`Photo ${idx + 1} for ${post.title}`}
-            width={400}
-            height={400}
-            className="w-full h-auto object-cover rounded-lg"
-          />
-        ))}
-      </div>
-    )}
-
-    {/* Title and Description Section */}
-    <div className="flex flex-col gap-2 p-3 bg-gray-200 rounded-lg">
-      <h3 className="text-xl font-semibold">{post.title}</h3>
-      <p className="text-gray-700">{post.description}</p>
-    </div>
-
-    {/* When / Where Bar */}
-    <div className="flex justify-between px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">
-      <span>When: {post.when}</span>
-      <span>Where: {post.where}</span>
-    </div>
-
-    {/* Resolved Label */}
-    {post.ressolved && (
-      <div className="text-green-600 font-semibold text-center mt-2 rounded-lg">
-        Resolved
-      </div>
-    )}
-  </div>
-);
-
-
+// types
+import { type Post, type Photo } from "@/types";
 
 const MainScreen = ({ userId }: { userId: string }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"map" | "board">("map");
   const [posts, setPosts] = useState<Post[]>([]);
   const [photos, setPhotos] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(true);
@@ -77,14 +27,14 @@ const MainScreen = ({ userId }: { userId: string }) => {
 
       const { data: postsData, error: postsError } = await supabase
         .from("posts")
-        .select("*")
-        .eq("type", "lost")
-        .order("when", { ascending: false });
+        .select("*, user:user_id (name, email)")
+        .order("created_at", { ascending: false });
 
       if (postsError) {
         setLoading(false);
         return;
       }
+      console.log(postsData);
       setPosts(postsData || []);
 
       const postIds = (postsData || []).map((p) => p.id);
@@ -107,63 +57,45 @@ const MainScreen = ({ userId }: { userId: string }) => {
     }
 
     fetchData();
-    // const interval = setInterval(fetchData, 10000);
-    // return () => clearInterval(interval);
-  }, [activeTab]);
+  }, []);
 
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white p-6 flex flex-col items-start space-y-6 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Menu</h2>
-        <button
-          onClick={() => setPostFormOpen(true)}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition"
-        >
-          New Post
-        </button>
-        <button
-          onClick={() => console.log("Show your posts")}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg font-semibold transition"
-        >
-          Your Posts
-        </button>
-      </aside>
+      <SideMenu openForm={() => setPostFormOpen(true)} />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
-        <h1 className="text-2xl font-bold mb-6">Live Request Board</h1>
+      <main className="flex-1 overflow-y-auto bg-gray-100">
+        <BoardHeader />
         {loading ? (
-          <p>Loading...</p>
+          <div className="flex items-center justify-center h-screen">
+            <Image
+              src={yaleLogo}
+              alt="Lale logo"
+              width={64}
+              className="animate-spin"
+            />
+          </div>
         ) : posts.length === 0 ? (
           <p>No lost items found.</p>
         ) : (
           <div className="space-y-6 max-w-4xl mx-auto">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} photos={photos[post.id] || []} />
+              <PostCard
+                key={post.id}
+                post={post}
+                photos={photos[post.id] || []}
+              />
             ))}
           </div>
         )}
       </main>
 
-      {/* Slide-in PostForm */}
-      <div
-        className={`fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ${
-          postFormOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        {postFormOpen && <PostForm userId={userId} closeForm={() => setPostFormOpen(false)} />}
-      </div>
-
-      {/* Overlay */}
+      {/* PostForm */}
       {postFormOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40"
-          onClick={() => setPostFormOpen(false)}
-        />
+        <PostForm userId={userId} closeForm={() => setPostFormOpen(false)} />
       )}
     </div>
-
   );
 };
 
