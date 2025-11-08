@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import PostCard from "./PostCard";
-import PostForm from "./PostFrom";
-import SideMenu from "./SideMenu";
+import PostCard from "@/components/PostCard";
+import PostForm from "@/components/PostFrom";
+import SideMenu from "@/components/SideMenu";
 import { createClient } from "@/utils/supabase/client";
-import BoardHeader from "./BoardHeader";
+import BoardHeader from "@/components/BoardHeader";
 
 import yaleLogo from "@/public/images/yale_logo.png";
 

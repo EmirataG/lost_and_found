@@ -1,5 +1,5 @@
 import { signInWithGoogle } from "./actions";
-import WelcomeHero from "../components/WelcomeHero";
+import WelcomeHero from "@/components/WelcomeHero";
 
 export default function LoginPage() {
   return (
