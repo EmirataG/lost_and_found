@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import PostForm from "./PostFrom";
 import { createClient } from "@/utils/supabase/client";
+import SideMenu from "./SideMenu";
 
 type Post = {
   id: number;
@@ -114,7 +115,8 @@ const MainScreen = ({ userId }: { userId: string }) => {
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white p-6 flex flex-col items-start space-y-6 shadow-lg">
+      <SideMenu openForm={() => setPostFormOpen(true)} />
+      {/* <aside className="w-64 bg-gray-800 text-white p-6 flex flex-col items-start space-y-6 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Menu</h2>
         <button
           onClick={() => setPostFormOpen(true)}
@@ -128,7 +130,7 @@ const MainScreen = ({ userId }: { userId: string }) => {
         >
           Your Posts
         </button>
-      </aside>
+      </aside> */}
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
