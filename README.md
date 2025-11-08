@@ -31,12 +31,10 @@ It is not shared publicly.
 Example structure (values are placeholders):
 
 ```env
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_SUPABASE_URL=???
+NEXT_PUBLIC_SUPABASE_ANON_KEY=???
+SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET=???
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 ### **4. Run the App (Important)**
