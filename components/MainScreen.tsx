@@ -17,9 +17,20 @@ const MainScreen = ({ userId }: { userId: string }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [photos, setPhotos] = useState<Record<number, string[]>>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const [menuShown, setMenuShown] = useState<boolean>(true);
 
   useEffect(() => {
+    const showMenuIfNotMobile = () => {
+      if (window.innerWidth > 768) {
+        setMenuShown(true);
+      }
+      console.log(window.innerWidth, menuShown);
+    };
+    showMenuIfNotMobile();
+    window.addEventListener("resize", showMenuIfNotMobile);
+
     const supabase = createClient();
 
     async function fetchData() {
@@ -55,18 +66,26 @@ const MainScreen = ({ userId }: { userId: string }) => {
       }
       setLoading(false);
     }
-
     fetchData();
+
+    return () => window.removeEventListener("resize", showMenuIfNotMobile);
   }, []);
 
   return (
     <div className="flex h-screen">
       {/* Left Sidebar */}
-      <SideMenu openForm={() => setPostFormOpen(true)} />
+      <SideMenu
+        openForm={() => setPostFormOpen(true)}
+        menuShownOnMobile={menuShown}
+        closeMenuOnMobile={() => setMenuShown(false)}
+      />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-gray-100">
-        <BoardHeader />
+        <BoardHeader
+          menuShownOnMobile={menuShown}
+          OpenMenuOnMobile={() => setMenuShown(true)}
+        />
         {loading ? (
           <div className="flex items-center justify-center h-screen">
             <Image

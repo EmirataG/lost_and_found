@@ -1,33 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { AiOutlineMenuFold } from "react-icons/ai";
 
 type Props = {
   openForm: () => void;
+  closeMenuOnMobile: () => void;
+  menuShownOnMobile: boolean;
 };
 
-const SideMenu = ({ openForm }: Props) => {
-  const [collapsed, setCollapsed] = useState(false);
-
+const SideMenu = ({
+  openForm,
+  closeMenuOnMobile,
+  menuShownOnMobile,
+}: Props) => {
   return (
     <div
-      className={`fixed left-0 top-0 h-full shadow-lg flex flex-col items-start transition-all duration-300 ease-in-out z-20
-        ${collapsed ? "w-0 p-2" : "w-64 p-5"} bg-gray-800`}
+      className={`h-full shadow-lg flex flex-col items-start transition-all duration-300 ease-in-out
+        bg-linear-to-b from-yaleBlue to-blue-200 ${
+          menuShownOnMobile ? "w-64 p-4" : "w-0 p-0"
+        }`}
     >
-      {/* Collapse Button */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-5 -right-2 bg-gray-800 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-gray-700 transition-all z-30 text-sm"
-        aria-label="Toggle sidebar"
-      >
-        {collapsed ? "›" : "‹"}
-      </button>
-
       {/* Expanded Content */}
-      {!collapsed && (
+      {menuShownOnMobile && (
         <>
-          <h2 className="text-lg font-bold text-white mb-5 ml-2">Menu</h2>
-
+          <div className="flex justify-between items-center text-white w-full mb-4">
+            <h2 className="text-lg font-bold ml-2">Menu</h2>
+            <AiOutlineMenuFold
+              size={28}
+              className="md:invisible hover:scale-105 active:scale-95 transition-all duration-400"
+              onClick={closeMenuOnMobile}
+            />
+          </div>
           <div className="flex flex-col w-full space-y-3">
             <button
               onClick={openForm}
