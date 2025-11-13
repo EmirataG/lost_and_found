@@ -76,15 +76,15 @@ const MainScreen = ({ userId }: { userId: string }) => {
       {/* Left Sidebar */}
       <SideMenu
         openForm={() => setPostFormOpen(true)}
-        menuShownOnMobile={menuShown}
-        closeMenuOnMobile={() => setMenuShown(false)}
+        menuShown={menuShown}
+        closeMenu={() => setMenuShown(false)}
       />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-gray-100">
         <BoardHeader
-          menuShownOnMobile={menuShown}
-          OpenMenuOnMobile={() => setMenuShown(true)}
+          menuShown={menuShown}
+          OpenMenu={() => setMenuShown(true)}
         />
         {loading ? (
           <div className="flex items-center justify-center h-screen">

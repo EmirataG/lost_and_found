@@ -57,7 +57,7 @@ const PostForm = ({
   }
 
   return (
-    <div className="absolute top-0 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20 z-50">
+    <div className="absolute top-0 p-4 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20 z-50">
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col items-center gap-4"
