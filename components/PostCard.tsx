@@ -1,25 +1,12 @@
 import Image from "next/image";
 import { type Post } from "@/types";
+import ImageContainer from "./post_card/ImageContainer";
 
 const PostCard = ({ post, photos }: { post: Post; photos: string[] }) => {
   const isLost = post.type === "lost";
   return (
     <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-300 overflow-hidden space-y-4">
-      {/* Photos Section */}
-      {photos.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {photos.map((url, idx) => (
-            <Image
-              key={idx}
-              src={url}
-              alt={`Photo ${idx + 1} for ${post.title}`}
-              width={400}
-              height={400}
-              className="w-full h-auto object-cover rounded-lg"
-            />
-          ))}
-        </div>
-      )}
+      {photos.length > 0 ? <ImageContainer urls={photos} /> : null}
 
       {/* Title and Description Section */}
       <div className="flex flex-col gap-2 p-3 bg-blue-100 rounded-lg">

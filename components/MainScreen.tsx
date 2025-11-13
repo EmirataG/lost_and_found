@@ -98,7 +98,7 @@ const MainScreen = ({ userId }: { userId: string }) => {
         ) : posts.length === 0 ? (
           <p>No lost items found.</p>
         ) : (
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="space-y-6 max-w-4xl mx-auto p-4">
             {posts.map((post) => (
               <PostCard
                 key={post.id}
