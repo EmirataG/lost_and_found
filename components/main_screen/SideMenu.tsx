@@ -11,7 +11,7 @@ type Props = {
 };
 
 const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
-  const firstName = userName.split(" ")[0];
+  const firstName =  userName && userName !== "About" ? userName.split(" ")[0] : "there";
   return (
     <div
       className={`h-full shadow-lg flex flex-col items-start transition-all duration-300 ease-in-out
@@ -42,16 +42,24 @@ const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
             </button>
 
             <Link
+              href="/"
+              className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
+            >
+              Home
+            </Link>
+
+            <Link
               href="/my-posts"
               className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
             >
               Your Posts
             </Link>
+
             <Link
               href="/about"
               className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
             >
-              About Find @ Yale
+              About Lost @ Yale
             </Link>
           </div>
         </>
