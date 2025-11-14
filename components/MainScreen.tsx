@@ -12,14 +12,19 @@ import yaleLogo from "@/public/images/yale_logo.png";
 
 // types
 import { type Post, type Photo } from "@/types";
+import { User } from "@supabase/supabase-js";
 
-const MainScreen = ({ userId }: { userId: string }) => {
+const MainScreen = ({ user }: { user: User }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [photos, setPhotos] = useState<Record<number, string[]>>({});
   const [loading, setLoading] = useState(false);
-
   const [menuShown, setMenuShown] = useState<boolean>(true);
+
+  const userId = user.id;
+  const userName = user.user_metadata.name;
+
+  console.log(user.user_metadata);
 
   useEffect(() => {
     const showMenuIfNotMobile = () => {
@@ -75,6 +80,7 @@ const MainScreen = ({ userId }: { userId: string }) => {
     <div className="flex h-screen">
       {/* Left Sidebar */}
       <SideMenu
+        userName={userName}
         openForm={() => setPostFormOpen(true)}
         menuShown={menuShown}
         closeMenu={() => setMenuShown(false)}

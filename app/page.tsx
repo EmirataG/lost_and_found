@@ -11,9 +11,8 @@ const Page = async () => {
   if (error || !user) {
     redirect("/login");
   }
-  const userData = user.user_metadata;
 
-  return <MainScreen userId={user.id} />;
+  return <MainScreen user={user} />;
 };
 
 export default Page;
