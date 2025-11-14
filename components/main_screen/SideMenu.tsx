@@ -41,12 +41,12 @@ const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
               + New Post
             </button>
 
-            <button
-              onClick={() => console.log("TODO: show user posts")}
-              className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all cursor-pointer"
+            <Link
+              href="/my-posts"
+              className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
             >
               Your Posts
-            </button>
+            </Link>
             <Link
               href="/about"
               className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"

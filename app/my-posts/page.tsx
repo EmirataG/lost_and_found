@@ -1,15 +1,19 @@
+import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import MainScreen from "@/components/main_screen/MainScreen";
-
 import { getCurrentUser } from "@/utils/auth_utils";
 
-const Page = async () => {
+const MyPostsPage = async () => {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
 
-  return <MainScreen user={user} />;
+  return (
+    <div>
+      <h1>{`Hey ${user.user_metadata.name}`}</h1>
+    </div>
+  );
 };
 
-export default Page;
+export default MyPostsPage;

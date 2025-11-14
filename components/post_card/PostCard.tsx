@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { type Post } from "@/types";
-import ImageContainer from "./post_card/ImageContainer";
+import ImageContainer from "./ImageContainer";
 
 const PostCard = ({ post, photos }: { post: Post; photos: string[] }) => {
   const isLost = post.type === "lost";
