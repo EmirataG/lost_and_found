@@ -11,31 +11,19 @@ import BoardHeader from "@/components/main_screen/BoardHeader";
 import yaleLogo from "@/public/images/yale_logo.png";
 
 // types
-import { type Post, type Photo } from "@/types";
+import { type PostInfo, type Photo } from "@/types";
 import { User } from "@supabase/supabase-js";
 
 const MainScreen = ({ user }: { user: User }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [photos, setPhotos] = useState<Record<number, string[]>>({});
+  const [posts, setPosts] = useState<PostInfo[]>([]);
+  const [photos, setPhotos] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(false);
-  const [menuShown, setMenuShown] = useState<boolean>(true);
 
   const userId = user.id;
   const userName = user.user_metadata.name;
 
-  console.log(user.user_metadata);
-
   useEffect(() => {
-    const showMenuIfNotMobile = () => {
-      if (window.innerWidth > 768) {
-        setMenuShown(true);
-      }
-      console.log(window.innerWidth, menuShown);
-    };
-    showMenuIfNotMobile();
-    window.addEventListener("resize", showMenuIfNotMobile);
-
     const supabase = createClient();
 
     async function fetchData() {
@@ -50,7 +38,6 @@ const MainScreen = ({ user }: { user: User }) => {
         setLoading(false);
         return;
       }
-      console.log(postsData);
       setPosts(postsData || []);
 
       const postIds = (postsData || []).map((p) => p.id);
@@ -61,7 +48,7 @@ const MainScreen = ({ user }: { user: User }) => {
           .in("post_id", postIds);
 
         if (!photosError && photosData) {
-          const grouped: Record<number, string[]> = {};
+          const grouped: Record<string, string[]> = {};
           photosData.forEach((photo: Photo) => {
             if (!grouped[photo.post_id]) grouped[photo.post_id] = [];
             grouped[photo.post_id].push(photo.url);
@@ -72,26 +59,13 @@ const MainScreen = ({ user }: { user: User }) => {
       setLoading(false);
     }
     fetchData();
-
-    return () => window.removeEventListener("resize", showMenuIfNotMobile);
   }, []);
 
   return (
     <div className="flex h-screen">
-      {/* Left Sidebar */}
-      <SideMenu
-        userName={userName}
-        openForm={() => setPostFormOpen(true)}
-        menuShown={menuShown}
-        closeMenu={() => setMenuShown(false)}
-      />
-
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-gray-100">
-        <BoardHeader
-          menuShown={menuShown}
-          OpenMenu={() => setMenuShown(true)}
-        />
+        <BoardHeader />
         {loading ? (
           <div className="flex items-center justify-center h-screen">
             <Image

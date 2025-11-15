@@ -2,7 +2,7 @@ import Image from "next/image";
 import { type PostInfo } from "@/types";
 import ImageContainer from "./ImageContainer";
 
-const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
+const MyPostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
   const isLost = post.type === "lost";
   return (
     <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-300 overflow-hidden space-y-4">
@@ -55,4 +55,4 @@ const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
   );
 };
 
-export default PostCard;
+export default MyPostCard;
