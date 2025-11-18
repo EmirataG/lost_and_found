@@ -4,6 +4,7 @@ import { type PostType } from "@/types";
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 
 import PostTypeToggle from "./PostTypeToggle";
+import ImageUploadBox from "./ImageUploadBox";
 
 const PostForm = ({
   userId,
@@ -20,15 +21,6 @@ const PostForm = ({
   const [where, setWhere] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isConfirmShown, setIsConfirmShown] = useState<boolean>(false);
-
-  function handleBack() {
-    if (title != "" || description != "" || when != "" || where != "") {
-      setIsConfirmShown(true);
-    } else {
-      closeForm();
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,6 +28,13 @@ const PostForm = ({
 
     try {
       const formData = new FormData(e.currentTarget);
+
+      // the file inout tag keeps the first file...
+      // so without this line the first phot would be duplicated!
+      formData.delete("photo");
+      photos.forEach((photo) => {
+        formData.append("photo", photo);
+      });
       const response = await fetch("/api/upload-post", {
         method: "POST",
         body: formData,
@@ -57,10 +56,13 @@ const PostForm = ({
   }
 
   return (
-    <div className="absolute top-0 p-4 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20 z-50">
+    <div
+      className="fixed top-0 p-8 flex justify-center items-center h-screen
+     w-screen backdrop-blur-sm bg-black/20 z-50"
+    >
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col items-center gap-4"
+        className="bg-white flex-1 rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col items-center gap-4 overflow-y-auto max-h-[calc(100vh-2rem)]"
       >
         {/* Header */}
         <div className="flex items-center justify-between w-full">
@@ -108,16 +110,7 @@ const PostForm = ({
           <label className="font-medium text-gray-700">
             Photos can help a lot!
           </label>
-          <input
-            name="photo"
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) =>
-              setPhotos(e.target.files ? Array.from(e.target.files) : [])
-            }
-            className="w-full text-gray-700"
-          />
+          <ImageUploadBox photos={photos} setPhotos={setPhotos} />
 
           <label className="font-medium text-gray-700">
             {isLost ? "Where did you last see it?" : "Where did you find it?"}

@@ -58,8 +58,8 @@ const MainScreen = ({ user }: { user: User }) => {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <main className="flex-1 overflow-y-auto bg-gray-100">
+    <div className="flex-1 flex">
+      <main className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center h-screen">
             <YaleSpinner />
@@ -67,7 +67,7 @@ const MainScreen = ({ user }: { user: User }) => {
         ) : posts.length === 0 ? (
           <p>No lost items found.</p>
         ) : (
-          <div className="space-y-6 max-w-4xl mx-auto p-4">
+          <div className="space-y-6 max-w-4xl mx-auto">
             {posts.map((post) => (
               <PostCard
                 key={post.id}

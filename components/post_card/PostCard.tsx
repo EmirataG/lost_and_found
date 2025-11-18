@@ -27,7 +27,6 @@ const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
           max-h-[450px] lg:max-h-full
         "
       >
-        {/* Top Section (fixed) */}
         <div className="flex justify-between items-center gap-4 shrink-0">
           <section>
             <h3 className="text-xl text-justify font-semibold">{post.title}</h3>

@@ -13,9 +13,9 @@ export default async function MainLayout({
     redirect("/login");
   }
   return (
-    <div className="flex flex-col h-screen md:flex-row">
+    <div className="flex flex-col h-screen md:flex-row bg-gray-100">
       <Menu userId={user.id} userName={user.user_metadata.name} />
-      <main className="flex-1 overflow-scroll">{children}</main>
+      <main className="flex-1 overflow-scroll p-4">{children}</main>
     </div>
   );
 }

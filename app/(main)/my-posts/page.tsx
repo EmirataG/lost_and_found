@@ -16,7 +16,15 @@ const MyPostsPage = async () => {
     user.user_metadata.name.split(" ")[0] ?? user.user_metadata.name;
 
   return (
-    <div className="p-4 h-full flex flex-col">
+    <div className="h-full flex flex-col">
+      <header className="text-center mb-6">
+        <h1 className="text-3xl text-yaleBlue font-semibold">
+          Hey, {firstName}!
+        </h1>
+        <h2 className="text-2xl text-gray-600 font-medium">
+          You can find your posts here 🐶
+        </h2>
+      </header>
       <MyPostsBoard posts={posts} photos={photos} />
     </div>
   );

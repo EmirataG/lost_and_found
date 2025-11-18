@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 @theme {
   --color-yaleBlue: #03346a;
 }
