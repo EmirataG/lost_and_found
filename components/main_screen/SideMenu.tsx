@@ -11,7 +11,8 @@ type Props = {
 };
 
 const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
-  const firstName =  userName && userName !== "About" ? userName.split(" ")[0] : "there";
+  const firstName =
+    userName && userName !== "About" ? userName.split(" ")[0] : "there";
   return (
     <div
       className={`h-full shadow-lg flex flex-col items-start transition-all duration-300 ease-in-out
@@ -26,7 +27,7 @@ const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
       {menuShown && (
         <>
           <div className="flex justify-between items-center text-white w-full mb-4">
-            <h2 className="text-lg font-bold ml-2">{`Hey, ${firstName}`}</h2>
+            <h2 className="text-lg font-bold ml-2">Lost @ Yale</h2>
             <AiOutlineMenuFold
               size={28}
               className="md:invisible hover:scale-105 active:scale-95 transition-all duration-400"

@@ -1,18 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import PostCard from "@/components/post_card/PostCard";
 import PostForm from "@/components/post_form/PostFrom";
-import SideMenu from "@/components/main_screen/SideMenu";
 import { createClient } from "@/utils/supabase/client";
-import BoardHeader from "@/components/main_screen/BoardHeader";
-
-import yaleLogo from "@/public/images/yale_logo.png";
 
 // types
 import { type PostInfo, type Photo } from "@/types";
 import { User } from "@supabase/supabase-js";
+import YaleSpinner from "../YaleSpinner";
 
 const MainScreen = ({ user }: { user: User }) => {
   const [postFormOpen, setPostFormOpen] = useState<boolean>(false);
@@ -63,17 +59,10 @@ const MainScreen = ({ user }: { user: User }) => {
 
   return (
     <div className="flex h-screen">
-      {/* Main Content */}
       <main className="flex-1 overflow-y-auto bg-gray-100">
-        <BoardHeader />
         {loading ? (
           <div className="flex items-center justify-center h-screen">
-            <Image
-              src={yaleLogo}
-              alt="Lale logo"
-              width={64}
-              className="animate-spin"
-            />
+            <YaleSpinner />
           </div>
         ) : posts.length === 0 ? (
           <p>No lost items found.</p>
