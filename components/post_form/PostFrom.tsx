@@ -129,7 +129,7 @@ const PostForm = ({
           </label>
           <input
             name="when"
-            type="text"
+            type="date"
             value={when}
             onChange={(e) => setWhen(e.target.value)}
             required
