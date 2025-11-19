@@ -17,7 +17,8 @@ const PostForm = ({
   const isLost = postType === "lost";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [when, setWhen] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [where, setWhere] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -35,6 +36,14 @@ const PostForm = ({
       photos.forEach((photo) => {
         formData.append("photo", photo);
       });
+
+      // Build when string for API
+      const whenString = endDate
+      ? `${startDate} → ${endDate}`
+      : startDate;
+
+      formData.append("when", whenString);
+
       const response = await fetch("/api/upload-post", {
         method: "POST",
         body: formData,
@@ -47,7 +56,8 @@ const PostForm = ({
     } finally {
       setTitle("");
       setDescription("");
-      setWhen("");
+      setStartDate("");
+      setEndDate("");
       setWhere("");
       setPhotos([]);
       closeForm();
@@ -127,14 +137,30 @@ const PostForm = ({
           <label className="font-medium text-gray-700">
             {isLost ? "When did you last see it?" : "When did you find it?"}
           </label>
-          <input
-            name="when"
-            type="text"
-            value={when}
-            onChange={(e) => setWhen(e.target.value)}
-            required
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-          />
+
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="date"
+              name="start_date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+
+            <input
+              type="date"
+              name="end_date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </div>
+
+          <p className="text-xs text-gray-500">
+            End date is optional. Leave blank if exact day is known.
+          </p>
+
         </div>
 
         {/* Submit */}
