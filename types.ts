@@ -39,3 +39,5 @@ export type Photo = {
 };
 
 export type PostType = "lost" | "found";
+
+export type PostFilter = "all" | "unresolved" | "resolved";
