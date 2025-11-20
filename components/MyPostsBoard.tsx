@@ -30,7 +30,7 @@ const MyPostsBoard = ({
       {postsShown.length > 0 ? (
         <div className="space-y-6 max-w-4xl mx-auto">
           {postsShown.map((post, index) => (
-            <MyPostCard post={post} photos={photos[post.id]} key={index} />
+            <MyPostCard post={post} photos={photos[post.id] || []} key={index} />
           ))}
         </div>
       ) : (
