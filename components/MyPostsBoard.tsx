@@ -1,6 +1,7 @@
 "use client";
 
 import MyPostCard from "@/components/post_card/MyPostCard";
+import UpdatePostForm from "./post_form/UpdatePostForm";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import { type PostInfo } from "@/types";
@@ -15,6 +16,8 @@ const MyPostsBoard = ({
   photos: Record<string, string[]>;
 }) => {
   const [filter, setFilter] = useState<PostFilter>("unresolved");
+  const [updatePostFormShown, setUpdatePostFormShown] =
+    useState<boolean>(false);
 
   let postsShown: PostInfo[];
   if (filter === "unresolved") {
@@ -26,18 +29,23 @@ const MyPostsBoard = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center gap-4">
-      <FilterToggle filter={filter} setFilter={setFilter} />
-      {postsShown.length > 0 ? (
-        <div className="space-y-6 max-w-4xl mx-auto">
-          {postsShown.map((post, index) => (
-            <MyPostCard post={post} photos={photos[post.id]} key={index} />
-          ))}
-        </div>
-      ) : (
-        <NoPostsFound />
-      )}
-    </div>
+    <>
+      {updatePostFormShown ? (
+        <UpdatePostForm post={{ ...posts[0], photos: photos[posts[0].id] }} />
+      ) : null}
+      <div className="flex-1 flex flex-col items-center gap-4">
+        <FilterToggle filter={filter} setFilter={setFilter} />
+        {postsShown.length > 0 ? (
+          <div className="space-y-6 max-w-4xl mx-auto">
+            {postsShown.map((post, index) => (
+              <MyPostCard post={post} photos={photos[post.id]} key={index} />
+            ))}
+          </div>
+        ) : (
+          <NoPostsFound />
+        )}
+      </div>
+    </>
   );
 };
 
@@ -49,7 +57,7 @@ const FilterToggle = ({
   setFilter: Dispatch<SetStateAction<PostFilter>>;
 }) => {
   return (
-    <div className="bg-gray-300 duration-400 rounded-xl flex w-84">
+    <div className="duration-400 rounded-xl flex w-84">
       <button
         className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
           filter === "all"
