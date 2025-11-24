@@ -17,6 +17,23 @@ export type Post = {
   created_at: string;
 };
 
+export type PostData = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  photos: string[];
+  when: string;
+  where: string;
+  resolved: boolean;
+  type: string;
+  created_at: string;
+  user: {
+    name: string;
+    email: string;
+  };
+};
+
 export type PostInfo = {
   id: string;
   user_id: string;

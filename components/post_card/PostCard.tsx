@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { type PostInfo } from "@/types";
+import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
 
-const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
+const PostCard = ({ post }: { post: PostData }) => {
   const isLost = post.type === "lost";
+  const photos = post.photos;
 
   return (
     <div
