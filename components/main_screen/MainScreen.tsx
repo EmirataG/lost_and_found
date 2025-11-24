@@ -5,7 +5,7 @@ import PostCard from "@/components/post_card/PostCard";
 import { createClient } from "@/utils/supabase/client";
 
 // types
-import { type PostInfo, type Photo, type PostData } from "@/types";
+import { type PostData } from "@/types";
 import { User } from "@supabase/supabase-js";
 
 import YaleSpinner from "../YaleSpinner";

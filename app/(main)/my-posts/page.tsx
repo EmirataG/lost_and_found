@@ -11,7 +11,7 @@ const MyPostsPage = async () => {
     redirect("/login");
   }
 
-  const { posts, photos } = await fetchUserPosts(user.id);
+  const posts = await fetchUserPosts(user.id);
   const firstName =
     user.user_metadata.name.split(" ")[0] ?? user.user_metadata.name;
 
@@ -25,7 +25,7 @@ const MyPostsPage = async () => {
           You can find your posts here 🐶
         </h2>
       </header>
-      <MyPostsBoard posts={posts} photos={photos} />
+      <MyPostsBoard posts={posts} />
     </div>
   );
 };
