@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
+import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import LocationHoverTooltip from "./LocationHoverTooltip";
 
 const MyPostCard = ({ post }: { post: PostData }) => {
   const isLost = post.type === "lost";
@@ -67,13 +69,16 @@ const MyPostCard = ({ post }: { post: PostData }) => {
         </p>
 
         {/* When Where */}
-        <div className="mt-auto grid grid-cols-2 bg-yaleBlue text-white text-sm font-medium rounded-lg overflow-hidden">
+        <div className="mt-auto grid grid-cols-2 bg-yaleBlue text-white text-sm font-medium rounded-lg overflow-visible">
           <div className="flex items-center justify-center px-4 py-2 border-r border-white/40">
+            <FaClock className="mr-1.5 text-white" size={14} />
             <span className="font-bold mr-1">When:</span> {post.when}
           </div>
 
-          <div className="flex items-center justify-center px-4 py-2">
-            <span className="font-bold mr-1">Where:</span> {post.where}
+          <div className="flex items-center justify-center px-4 py-2 relative">
+            <FaMapMarkerAlt className="mr-1.5 text-white" size={14} />
+            <span className="font-bold mr-1">Where:</span>
+            <LocationHoverTooltip location={post.where} />
           </div>
         </div>
 

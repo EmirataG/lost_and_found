@@ -9,13 +9,14 @@ import { type PostData } from "@/types";
 import { User } from "@supabase/supabase-js";
 
 import YaleSpinner from "../YaleSpinner";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 type TypeFilter = "all" | "lost" | "found";
 
 const MainScreen = ({ user }: { user: User }) => {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(true); // Start expanded
 
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [titleFilter, setTitleFilter] = useState<string>("");
@@ -91,9 +92,30 @@ const MainScreen = ({ user }: { user: User }) => {
     <>
       <main className="flex-1 overflow-y-auto">
         <section className="bg-white p-4 rounded-xl max-w-4xl mx-auto shadow-lg border border-gray-300 flex flex-col items-center gap-2 mb-6">
-          <TypeFilterToggle filter={typeFilter} setFilter={setTypeFilter} />
+          {/* Collapsible Filter Header */}
+          <div className="w-full flex items-center justify-between mb-2">
+            <TypeFilterToggle filter={typeFilter} setFilter={setTypeFilter} />
+            <button
+              onClick={() => setFiltersExpanded(!filtersExpanded)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label={filtersExpanded ? "Collapse filters" : "Expand filters"}
+            >
+              <span className="font-medium">Filters</span>
+              {filtersExpanded ? (
+                <FaChevronUp size={14} />
+              ) : (
+                <FaChevronDown size={14} />
+              )}
+            </button>
+          </div>
 
-          <div className="flex flex-col lg:flex-row gap-4">
+          {/* Collapsible Filter Content */}
+          <div
+            className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
+              filtersExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="flex flex-col lg:flex-row gap-4">
             {/* Title */}
             <div className="flex flex-col">
               <label className="font-medium mb-1 text-gray-700">Title</label>
@@ -142,6 +164,7 @@ const MainScreen = ({ user }: { user: User }) => {
                 className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
               />
             </div>
+          </div>
           </div>
         </section>
         {loading ? (
