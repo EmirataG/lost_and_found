@@ -7,54 +7,37 @@ const PostCard = ({ post }: { post: PostData }) => {
   const photos = post.photos;
 
   return (
-    <div
-      className="
-        bg-white rounded-xl shadow-2xl border border-gray-300 
-        p-6 overflow-hidden
-        flex flex-col lg:flex-row gap-4
-      "
-    >
+    <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-gray-300 bg-white p-6 shadow-2xl lg:flex-row">
       {/* Image Section */}
       {photos.length > 0 ? (
-        <div className="w-full lg:w-[45%] overflow-hidden rounded-lg">
+        <div className="w-full overflow-hidden rounded-lg lg:w-[45%]">
           <ImageContainer urls={photos} />
         </div>
       ) : null}
 
       {/* Info Section */}
-      <div
-        className="
-          flex flex-col gap-2 bg-blue-100 rounded-lg p-4 flex-1 min-h-[250px] 
-          max-h-[450px] lg:max-h-full
-        "
-      >
-        <div className="flex justify-between items-center gap-4 shrink-0">
+      <div className="flex max-h-[450px] min-h-[250px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 lg:max-h-full">
+        <div className="flex shrink-0 items-center justify-between gap-4">
           <section>
-            <h3 className="text-xl text-justify font-semibold">{post.title}</h3>
-            <p className="text-gray-700 text-sm">
+            <h3 className="text-justify text-xl font-semibold">{post.title}</h3>
+            <p className="text-sm text-gray-700">
               Posted {new Date(post.created_at).toLocaleDateString()}
             </p>
           </section>
-          <div className="flex flex-col gap-2 shrink-0">
+          <div className="flex shrink-0 flex-col gap-2">
             <span
-              className={`
-                px-3 py-1 text-sm text-center font-semibold border rounded-full
-                ${
-                  isLost
-                    ? "bg-red-100 text-red-700"
-                    : "bg-green-100 text-green-700"
-                }
-              `}
+              className={`rounded-full border px-3 py-1 text-center text-sm font-semibold ${
+                isLost
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
+              } `}
             >
               {isLost ? "Lost" : "Found"}
             </span>
 
             <a
               href={`mailto:${post.user.email}`}
-              className="
-                px-3 py-1 rounded-full text-sm font-medium bg-yaleBlue 
-                text-white text-center hover:bg-white hover:text-yaleBlue border border-transparent hover:border-yaleBlue transition
-              "
+              className="rounded-full border border-transparent bg-yaleBlue px-3 py-1 text-center text-sm font-medium text-white transition hover:border-yaleBlue hover:bg-white hover:text-yaleBlue"
             >
               {isLost ? "Found it?" : "It's yours?"}
             </a>
@@ -62,23 +45,23 @@ const PostCard = ({ post }: { post: PostData }) => {
         </div>
 
         {/* Scrollable Middle Section */}
-        <p className="text-gray-700 text-justify text-sm flex-1 overflow-y-auto pr-2">
+        <p className="flex-1 overflow-y-auto pr-2 text-justify text-sm text-gray-700">
           {post.description}
         </p>
 
         {/* When Where */}
-        <div className="mt-auto grid grid-cols-2 bg-yaleBlue text-white text-sm font-medium rounded-lg overflow-hidden">
-          <div className="flex items-center justify-center px-4 py-2 border-r border-white/40">
-            <span className="font-bold mr-1">When:</span> {post.when}
+        <div className="mt-auto grid grid-cols-2 overflow-hidden rounded-lg bg-yaleBlue text-sm font-medium text-white">
+          <div className="flex items-center justify-center border-r border-white/40 px-4 py-2">
+            <span className="mr-1 font-bold">When:</span> {post.when}
           </div>
 
           <div className="flex items-center justify-center px-4 py-2">
-            <span className="font-bold mr-1">Where:</span> {post.where}
+            <span className="mr-1 font-bold">Where:</span> {post.where}
           </div>
         </div>
 
         {post.resolved && (
-          <div className="text-green-600 font-semibold text-center mt-2">
+          <div className="mt-2 text-center font-semibold text-green-600">
             Resolved
           </div>
         )}

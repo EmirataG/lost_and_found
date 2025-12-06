@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    "prettier-plugin-tailwindcss"
+  ],
+  "tailwindConfig": "./app/globals.css",
+  "tailwindFunctions": [
+    "clsx",
+    "cn",
+    "cva"
+  ],
+  "printWidth": 80,
+  "singleAttributePerLine": true
+}
