@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { type PostInfo } from "@/types";
+import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
 
-const MyPostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
+const MyPostCard = ({ post }: { post: PostData }) => {
   const isLost = post.type === "lost";
 
   return (
@@ -14,9 +14,9 @@ const MyPostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
       "
     >
       {/* Image Section */}
-      {photos.length > 0 ? (
+      {post.photos.length > 0 ? (
         <div className="w-full lg:w-[45%] overflow-hidden rounded-lg">
-          <ImageContainer urls={photos} />
+          <ImageContainer urls={post.photos} />
         </div>
       ) : null}
 

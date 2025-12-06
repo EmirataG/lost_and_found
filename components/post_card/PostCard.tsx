@@ -1,32 +1,10 @@
-"use client";
-
 import Image from "next/image";
-import { type PostInfo } from "@/types";
+import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
-import { useState, useEffect } from "react";
-import SimpleModal from "@/components/SimpleModal";
 
-const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
+const PostCard = ({ post }: { post: PostData }) => {
   const isLost = post.type === "lost";
-  const [open, setOpen] = useState(false);
-  const [connected, setConnected] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    async function check() {
-      try {
-        const res = await fetch("/api/connections/check", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ other_user_id: post.user_id }),
-        });
-        const json = await res.json();
-        setConnected(!!json.connected);
-      } catch (err) {
-        setConnected(false);
-      }
-    }
-    check();
-  }, [post.user_id]);
+  const photos = post.photos;
 
   return (
     <div
@@ -80,59 +58,6 @@ const PostCard = ({ post, photos }: { post: PostInfo; photos: string[] }) => {
             >
               {isLost ? "Found it?" : "It's yours?"}
             </a>
-
-            {!isLost && (
-              <>
-                <button
-                  onClick={() => setOpen(true)}
-                  className="mt-2 inline-block w-full text-center px-3 py-1 rounded-full text-sm font-medium bg-white text-yaleBlue border border-yaleBlue hover:bg-yaleBlue hover:text-white transition"
-                >
-                  Contact Finder
-                </button>
-
-                <SimpleModal open={open} onClose={() => setOpen(false)} title="Contact Finder">
-                  <div className="space-y-3">
-                    {connected === null && <div>Checking connection status...</div>}
-                    {connected === false && (
-                      <div>
-                        <p className="mb-2">You are not connected with this user.</p>
-                        <button
-                          onClick={async () => {
-                            try {
-                              const res = await fetch("/api/connections/request", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ receiver_id: post.user_id }),
-                              });
-                              const json = await res.json();
-                              alert(json.message || "Request sent");
-                              setOpen(false);
-                            } catch (err) {
-                              alert("Failed to send request");
-                            }
-                          }}
-                          className="px-4 py-2 bg-yaleBlue text-white rounded"
-                        >
-                          Send Connection Request
-                        </button>
-                      </div>
-                    )}
-
-                    {connected === true && (
-                      <div>
-                        <p className="mb-2">You are connected — start a conversation.</p>
-                        <a
-                          href={`/messages/new?userId=${post.user_id}`}
-                          className="px-4 py-2 bg-yaleBlue text-white rounded inline-block"
-                        >
-                          Open Chat
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </SimpleModal>
-              </>
-            )}
           </div>
         </div>
 

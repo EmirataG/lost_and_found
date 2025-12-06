@@ -4,18 +4,12 @@ import MyPostCard from "@/components/post_card/MyPostCard";
 import FilterToggle from "./FilterToggle";
 
 import { useState } from "react";
-import { type PostInfo, PostFilter } from "@/types";
+import { type PostData, PostFilter } from "@/types";
 
-const MyPostsBoard = ({
-  posts,
-  photos,
-}: {
-  posts: PostInfo[];
-  photos: Record<string, string[]>;
-}) => {
+const MyPostsBoard = ({ posts }: { posts: PostData[] }) => {
   const [filter, setFilter] = useState<PostFilter>("unresolved");
 
-  let postsShown: PostInfo[];
+  let postsShown: PostData[];
   if (filter === "unresolved") {
     postsShown = posts.filter((post) => !post.resolved);
   } else if (filter === "all") {
@@ -30,7 +24,7 @@ const MyPostsBoard = ({
       {postsShown.length > 0 ? (
         <div className="space-y-6 max-w-4xl mx-auto">
           {postsShown.map((post, index) => (
-            <MyPostCard post={post} photos={photos[post.id] || []} key={index} />
+            <MyPostCard post={post} key={index} />
           ))}
         </div>
       ) : (

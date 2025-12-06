@@ -30,33 +30,37 @@ const ImageContainer = ({ urls }: { urls: string[] }) => {
           onClick={() => setExpanded(true)}
         />
 
-        <FaArrowAltCircleLeft
-          size={32}
-          color="white"
-          className={`
+        {urls.length > 1 ? (
+          <>
+            <FaArrowAltCircleLeft
+              size={32}
+              color="white"
+              className={`
             absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer
             transition-all duration-300 z-20
             ${arrowsShown ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}
-          onClick={(event) => {
-            event.stopPropagation();
-            setImageIndex((prev) => (prev <= 0 ? lastIndex : prev - 1));
-          }}
-        />
+              onClick={(event) => {
+                event.stopPropagation();
+                setImageIndex((prev) => (prev <= 0 ? lastIndex : prev - 1));
+              }}
+            />
 
-        <FaArrowAltCircleRight
-          size={32}
-          color="white"
-          className={`
+            <FaArrowAltCircleRight
+              size={32}
+              color="white"
+              className={`
             absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer
             transition-all duration-300 z-20
             ${arrowsShown ? "opacity-100" : "opacity-0 pointer-events-none"}
           `}
-          onClick={(event) => {
-            event.stopPropagation();
-            setImageIndex((prev) => (prev >= lastIndex ? 0 : prev + 1));
-          }}
-        />
+              onClick={(event) => {
+                event.stopPropagation();
+                setImageIndex((prev) => (prev >= lastIndex ? 0 : prev + 1));
+              }}
+            />
+          </>
+        ) : null}
       </div>
 
       {/* Expanded fullscreen modal */}
@@ -91,7 +95,9 @@ const ExpandedImageContainer = ({
       <FaArrowAltCircleLeft
         size={36}
         color="white"
-        className="cursor-pointer hover:scale-105 active:scale-95"
+        className={`cursor-pointer hover:scale-105 active:scale-95 ${
+          urls.length <= 1 ? "invisible" : ""
+        }`}
         onClick={(event) => {
           event.stopPropagation();
           setImageIndex((prevImageIndex) =>
@@ -112,7 +118,9 @@ const ExpandedImageContainer = ({
       <FaArrowAltCircleRight
         size={36}
         color="white"
-        className="cursor-pointer hover:scale-105 active:scale-95"
+        className={`cursor-pointer hover:scale-105 active:scale-95 ${
+          urls.length <= 1 ? "invisible" : ""
+        }`}
         onClick={(event) => {
           event.stopPropagation();
           setImageIndex((prevImageIndex) =>

@@ -5,7 +5,7 @@ import PostCard from "@/components/post_card/PostCard";
 import { createClient } from "@/utils/supabase/client";
 
 // types
-import { type PostInfo, type Photo, type PostFilter } from "@/types";
+import { type PostData } from "@/types";
 import { User } from "@supabase/supabase-js";
 
 import YaleSpinner from "../YaleSpinner";
@@ -14,8 +14,7 @@ import { FaInfoCircle } from "react-icons/fa";
 type TypeFilter = "all" | "lost" | "found";
 
 const MainScreen = ({ user }: { user: User }) => {
-  const [posts, setPosts] = useState<PostInfo[]>([]);
-  const [photos, setPhotos] = useState<Record<string, string[]>>({});
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
@@ -60,31 +59,29 @@ const MainScreen = ({ user }: { user: User }) => {
 
       const { data: postsData, error: postsError } = await supabase
         .from("posts")
-        .select("*, user:user_id (name, email)")
+        .select(
+          `
+    *,
+    user:user_id (name, email),
+    photos:photos!photos_post_id_fkey (
+      url
+    )
+  `
+        )
         .order("created_at", { ascending: false });
+
+      console.log(JSON.stringify(postsData, null, 2));
 
       if (postsError) {
         setLoading(false);
         return;
       }
-      setPosts(postsData || []);
+      const formattedPosts = postsData.map((post) => ({
+        ...post,
+        photos: post.photos?.map((p: any) => p.url) || [],
+      }));
 
-      const postIds = (postsData || []).map((p) => p.id);
-      if (postIds.length > 0) {
-        const { data: photosData, error: photosError } = await supabase
-          .from("photos")
-          .select("post_id,url")
-          .in("post_id", postIds);
-
-        if (!photosError && photosData) {
-          const grouped: Record<string, string[]> = {};
-          photosData.forEach((photo: Photo) => {
-            if (!grouped[photo.post_id]) grouped[photo.post_id] = [];
-            grouped[photo.post_id].push(photo.url);
-          });
-          setPhotos(grouped);
-        }
-      }
+      setPosts(formattedPosts);
       setLoading(false);
     }
     fetchData();
@@ -156,11 +153,7 @@ const MainScreen = ({ user }: { user: User }) => {
         ) : (
           <div className="space-y-6 max-w-4xl mx-auto">
             {postsDisplayed.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                photos={photos[post.id] || []}
-              />
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
         )}
