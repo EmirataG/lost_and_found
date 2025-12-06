@@ -32,22 +32,22 @@ const MainScreen = ({ user }: { user: User }) => {
   }
   if (titleFilter) {
     postsDisplayed = postsDisplayed.filter((post) =>
-      post.title.toLowerCase().includes(titleFilter.toLowerCase())
+      post.title.toLowerCase().includes(titleFilter.toLowerCase()),
     );
   }
   if (placeFilter) {
     postsDisplayed = postsDisplayed.filter((post) =>
-      post.where.toLowerCase().includes(placeFilter.toLowerCase())
+      post.where.toLowerCase().includes(placeFilter.toLowerCase()),
     );
   }
   if (startDateFilter) {
     postsDisplayed = postsDisplayed.filter(
-      (post) => new Date(post.created_at) >= new Date(startDateFilter)
+      (post) => new Date(post.created_at) >= new Date(startDateFilter),
     );
   }
   if (endDateFilter) {
     postsDisplayed = postsDisplayed.filter(
-      (post) => new Date(post.created_at) <= new Date(endDateFilter)
+      (post) => new Date(post.created_at) <= new Date(endDateFilter),
     );
   }
 
@@ -66,7 +66,7 @@ const MainScreen = ({ user }: { user: User }) => {
     photos:photos!photos_post_id_fkey (
       url
     )
-  `
+  `,
         )
         .order("created_at", { ascending: false });
 
@@ -90,28 +90,31 @@ const MainScreen = ({ user }: { user: User }) => {
   return (
     <>
       <main className="flex-1 overflow-y-auto">
-        <section className="bg-white p-4 rounded-xl max-w-4xl mx-auto shadow-lg border border-gray-300 flex flex-col items-center gap-2 mb-6">
-          <TypeFilterToggle filter={typeFilter} setFilter={setTypeFilter} />
+        <section className="mx-auto mb-6 flex max-w-4xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
+          <TypeFilterToggle
+            filter={typeFilter}
+            setFilter={setTypeFilter}
+          />
 
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row">
             {/* Title */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1 text-gray-700">Title</label>
+              <label className="mb-1 font-medium text-gray-700">Title</label>
               <input
                 type="text"
                 onChange={(e) => setTitleFilter(e.target.value.trim())}
-                className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+                className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Date Range Section */}
             <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <label className="font-medium text-gray-700">
                   When was the item lost / found?
                 </label>
                 <FaInfoCircle
-                  className="text-gray-500 cursor-pointer"
+                  className="cursor-pointer text-gray-500"
                   title="If only one date is selected, an exact match is used. If both are given, it becomes a date range."
                   size={14}
                 />
@@ -121,13 +124,13 @@ const MainScreen = ({ user }: { user: User }) => {
                 <input
                   type="date"
                   onChange={(e) => setStartDateFilter(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
                   placeholder="Start Date"
                 />
                 <input
                   type="date"
                   onChange={(e) => setEndDateFilter(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
                   placeholder="End Date (optional)"
                 />
               </div>
@@ -135,25 +138,28 @@ const MainScreen = ({ user }: { user: User }) => {
 
             {/* Place */}
             <div className="flex flex-col">
-              <label className="font-medium mb-1 text-gray-700">Place</label>
+              <label className="mb-1 font-medium text-gray-700">Place</label>
               <input
                 type="text"
                 onChange={(e) => setPlaceFilter(e.target.value.trim())}
-                className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+                className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
         </section>
         {loading ? (
-          <div className="flex items-center justify-center h-screen">
+          <div className="flex h-screen items-center justify-center">
             <YaleSpinner />
           </div>
         ) : postsDisplayed.length === 0 ? (
           <p>No lost items found.</p>
         ) : (
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="mx-auto w-full max-w-5xl space-y-6 px-4">
             {postsDisplayed.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard
+                key={post.id}
+                post={post}
+              />
             ))}
           </div>
         )}
@@ -170,9 +176,9 @@ const TypeFilterToggle = ({
   setFilter: Dispatch<SetStateAction<TypeFilter>>;
 }) => {
   return (
-    <div className="bg-gray-300 duration-400 rounded-xl flex w-84">
+    <div className="flex w-84 rounded-xl bg-gray-300 duration-400">
       <button
-        className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
+        className={`flex-1 rounded-xl py-1 transition-all duration-400 ${
           filter === "all"
             ? "yale-blue-bg text-white"
             : "text-black hover:bg-gray-400"
@@ -186,7 +192,7 @@ const TypeFilterToggle = ({
         All
       </button>
       <button
-        className={`transition-all py-1 rounded-xl flex-1 ${
+        className={`flex-1 rounded-xl py-1 transition-all ${
           filter === "lost"
             ? "yale-blue-bg text-white"
             : "text-black hover:bg-gray-400"
@@ -200,7 +206,7 @@ const TypeFilterToggle = ({
         Lost
       </button>
       <button
-        className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
+        className={`flex-1 rounded-xl py-1 transition-all duration-400 ${
           filter === "found"
             ? "yale-blue-bg text-white"
             : "text-black hover:bg-gray-400"

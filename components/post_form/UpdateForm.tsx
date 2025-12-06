@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import ImageUploadBox from "./ImageUploadBox";
 import { PostData } from "@/types"; // your merged post type
 import { FaArrowAltCircleLeft } from "react-icons/fa";
@@ -12,9 +13,23 @@ const UpdatePostForm = ({
   post: PostData;
   closeForm: () => void;
 }) => {
+  const router = useRouter();
+
+  // Parse existing when string (could be "2025-01-15" or "2025-01-15 → 2025-01-20")
+  const parseWhen = (whenString: string) => {
+    const parts = whenString.split(" → ");
+    return {
+      start: parts[0] || "",
+      end: parts[1] || "",
+    };
+  };
+
+  const { start: initialStartDate, end: initialEndDate } = parseWhen(post.when);
+
   const [title, setTitle] = useState(post.title);
   const [description, setDescription] = useState(post.description);
-  const [when, setWhen] = useState(post.when);
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(initialEndDate);
   const [where, setWhere] = useState(post.where);
   const [photos, setPhotos] = useState<File[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>(
@@ -30,6 +45,12 @@ const UpdatePostForm = ({
       const formData = new FormData(e.currentTarget);
       formData.set("post_id", post.id);
       formData.delete("photo");
+
+      // Build when string for API (same as PostForm)
+      const whenString = endDate
+        ? `${startDate} → ${endDate}`
+        : startDate;
+      formData.set("when", whenString);
 
       // Append new photos
       photos.forEach((photo) => {
@@ -51,6 +72,9 @@ const UpdatePostForm = ({
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
+
+      // Trigger refetch of server component data
+      router.refresh();
     } catch (err) {
       console.error(err);
     } finally {
@@ -143,14 +167,28 @@ const UpdatePostForm = ({
 
           {/* When */}
           <label className="font-medium text-gray-700">When</label>
-          <input
-            name="when"
-            type="text"
-            value={when}
-            onChange={(e) => setWhen(e.target.value)}
-            required
-            className="w-full rounded-lg border border-gray-300 p-3 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="date"
+              name="start_date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              required
+              className="w-full rounded-lg border border-gray-300 p-3 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+
+            <input
+              type="date"
+              name="end_date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 p-3 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          <p className="text-xs text-gray-500">
+            End date is optional. Leave blank if exact day is known.
+          </p>
         </div>
 
         {/* Submit */}

@@ -1,3 +1,5 @@
+"use client";
+
 import { FiEdit3 } from "react-icons/fi";
 import { FiCheck } from "react-icons/fi";
 
@@ -5,10 +7,39 @@ import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
 import UpdatePostForm from "@/components/post_form/UpdateForm";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const MyPostCard = ({ post }: { post: PostData }) => {
+  const router = useRouter();
   const [isUpdateFormShown, setIsUpdateFormShown] = useState<boolean>(false);
+  const [isResolving, setIsResolving] = useState<boolean>(false);
   const isLost = post.type === "lost";
+
+  const handleMarkAsResolved = async () => {
+    if (post.resolved || isResolving) return;
+
+    setIsResolving(true);
+    try {
+      const res = await fetch("/api/resolve-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId: post.id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      // Trigger refetch of server component data
+      router.refresh();
+    } catch (err) {
+      console.error("Error marking post as resolved:", err);
+    } finally {
+      setIsResolving(false);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-gray-300 bg-white p-6 shadow-2xl lg:flex-row">
@@ -54,8 +85,16 @@ const MyPostCard = ({ post }: { post: PostData }) => {
                 {isLost ? "Lost" : "Found"}
               </span>
 
-              <button className="rounded-full border border-transparent bg-yaleBlue px-3 py-1 text-center text-sm font-medium text-white transition hover:border-yaleBlue hover:bg-white hover:text-yaleBlue">
-                {post.resolved ? "Ressolved 🎉" : "Mark as ressolved"}
+              <button
+                onClick={handleMarkAsResolved}
+                disabled={post.resolved || isResolving}
+                className="rounded-full border border-transparent bg-yaleBlue px-3 py-1 text-center text-sm font-medium text-white transition hover:border-yaleBlue hover:bg-white hover:text-yaleBlue disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {post.resolved
+                  ? "Resolved 🎉"
+                  : isResolving
+                    ? "Resolving..."
+                    : "Mark as resolved"}
               </button>
             </div>
           </div>

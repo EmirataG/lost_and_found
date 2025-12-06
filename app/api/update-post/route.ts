@@ -28,16 +28,37 @@ export async function POST(req: Request) {
     if (newPhotos.length > 0) {
       const photoUrls = await Promise.all(
         newPhotos.map(async (photo) => {
-          const sanitized = photo.name.replaceAll(" ", "_");
-          const filePath = `${postId}/${sanitized}`;
+          const sanitizedName = photo.name
+            .replaceAll(" ", "_")
+            .replace(/[^\w.-]/g, "");
+          const filePath = `${postId}/${sanitizedName}`;
 
-          await supabase.storage.from("photos").upload(filePath, photo);
-
-          const { data } = await supabase
+          const { error: uploadError } = await supabase.storage
             .from("photos")
-            .insert({ post_id: postId, url: filePath })
+            .upload(filePath, photo);
+
+          if (uploadError) {
+            console.error(`Error uploading photo ${photo.name}:`, uploadError);
+            throw uploadError;
+          }
+
+          const { data: publicUrl } = supabase.storage
+            .from("photos")
+            .getPublicUrl(filePath);
+
+          const { data, error: insertError } = await supabase
+            .from("photos")
+            .insert({ post_id: postId, url: publicUrl.publicUrl })
             .select("url")
             .single();
+
+          if (insertError) {
+            console.error(
+              `Error inserting photo URL to database:`,
+              insertError,
+            );
+            throw insertError;
+          }
 
           return data?.url;
         }),
@@ -47,14 +68,34 @@ export async function POST(req: Request) {
 
     // Delete photos if needed
     if (deletedPhotos.length > 0) {
-      console.log(deletedPhotos);
+      const deleteUrls = deletedPhotos.map((photoUrl) => {
+        const index = photoUrl.indexOf("photos/");
+        if (index === -1) {
+          return photoUrl;
+        }
+        const cutUrl = photoUrl.substring(index + 7);
+        return cutUrl;
+      });
+      console.log(deleteUrls);
       const { error } = await supabase.storage
-        .from("posts")
-        .remove(deletedPhotos);
+        .from("photos")
+        .remove(deleteUrls);
 
       if (error) {
         console.error(`Error deleting photos from storage: ${error}`);
       }
+
+      deletedPhotos.forEach(async (photo) => {
+        const { error } = await supabase
+          .from("photos")
+          .delete()
+          .eq("url", photo)
+          .eq("post_id", postId);
+
+        if (error) {
+          console.error(`Error deleting photos from database: ${error}`);
+        }
+      });
     }
 
     return NextResponse.json({ success: true });

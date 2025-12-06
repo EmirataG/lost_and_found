@@ -11,11 +11,11 @@ const Page = async () => {
 
   return (
     <div>
-      <header className="text-center mb-6">
-        <h1 className="text-3xl text-yaleBlue font-semibold">
+      <header className="mb-6 text-center">
+        <h1 className="text-3xl font-semibold text-yaleBlue">
           Welcome to the Lost & Found board!
         </h1>
-        <h2 className="text-2xl text-gray-600 font-medium">
+        <h2 className="text-2xl font-medium text-gray-600">
           Let’s help each other out 💙
         </h2>
       </header>

@@ -16,12 +16,12 @@ const MyPostsPage = async () => {
     user.user_metadata.name.split(" ")[0] ?? user.user_metadata.name;
 
   return (
-    <div className="h-full flex flex-col">
-      <header className="text-center mb-6">
-        <h1 className="text-3xl text-yaleBlue font-semibold">
+    <div className="flex h-full flex-col">
+      <header className="mb-6 text-center">
+        <h1 className="text-3xl font-semibold text-yaleBlue">
           Hey, {firstName}!
         </h1>
-        <h2 className="text-2xl text-gray-600 font-medium">
+        <h2 className="text-2xl font-medium text-gray-600">
           You can find your posts here 🐶
         </h2>
       </header>
