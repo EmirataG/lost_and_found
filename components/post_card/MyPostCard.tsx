@@ -8,6 +8,8 @@ import ImageContainer from "./ImageContainer";
 import UpdatePostForm from "@/components/post_form/UpdateForm";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
+import LocationHoverTooltip from "./LocationHoverTooltip";
 
 const MyPostCard = ({ post }: { post: PostData }) => {
   const router = useRouter();
@@ -104,15 +106,17 @@ const MyPostCard = ({ post }: { post: PostData }) => {
             {post.description}
           </p>
 
-          {/* When Where */}
-          <div className="mt-auto grid grid-cols-2 overflow-hidden rounded-lg bg-yaleBlue text-sm font-medium text-white">
-            <div className="flex items-center justify-center border-r border-white/40 px-4 py-2">
-              <span className="mr-1 font-bold">When:</span> {post.when}
-            </div>
+        {/* When Where */}
+        <div className="mt-auto grid grid-cols-2 bg-yaleBlue text-white text-sm font-medium rounded-lg overflow-visible">
+          <div className="flex items-center justify-center px-4 py-2 border-r border-white/40">
+            <FaClock className="mr-1.5 text-white" size={14} />
+            <span className="font-bold mr-1">When:</span> {post.when}
+          </div>
 
-            <div className="flex items-center justify-center px-4 py-2">
-              <span className="mr-1 font-bold">Where:</span> {post.where}
-            </div>
+          <div className="flex items-center justify-center px-4 py-2 relative">
+            <FaMapMarkerAlt className="mr-1.5 text-white" size={14} />
+            <span className="font-bold mr-1">Where:</span>
+            <LocationHoverTooltip location={post.where} />
           </div>
 
           {post.resolved && (
