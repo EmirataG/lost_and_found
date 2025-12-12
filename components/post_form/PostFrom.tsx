@@ -6,6 +6,8 @@ import { FaArrowAltCircleLeft } from "react-icons/fa";
 import PostTypeToggle from "./PostTypeToggle";
 import ImageUploadBox from "./ImageUploadBox";
 
+import PlaceAid from "../main_screen/PlaceAid";
+
 const PostForm = ({
   userId,
   closeForm,
@@ -15,11 +17,18 @@ const PostForm = ({
 }) => {
   const [postType, setPostType] = useState<PostType>("lost");
   const isLost = postType === "lost";
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // Track place and coordinates
   const [where, setWhere] = useState("");
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+
   const [photos, setPhotos] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -30,19 +39,20 @@ const PostForm = ({
     try {
       const formData = new FormData(e.currentTarget);
 
-      // the file inout tag keeps the first file...
-      // so without this line the first phot would be duplicated!
+      // Replace photo input to avoid duplicates
       formData.delete("photo");
-      photos.forEach((photo) => {
-        formData.append("photo", photo);
-      });
+      photos.forEach((photo) => formData.append("photo", photo));
 
-      // Build when string for API
-      const whenString = endDate
-      ? `${startDate} → ${endDate}`
-      : startDate;
-
+      // Append date string
+      const whenString = endDate ? `${startDate} → ${endDate}` : startDate;
       formData.append("when", whenString);
+      formData.append("where", where);
+      
+      // Append coordinates if available
+      if (coords) {
+        formData.append("lat", coords.lat.toString());
+        formData.append("lng", coords.lng.toString());
+      }
 
       const response = await fetch("/api/upload-post", {
         method: "POST",
@@ -59,6 +69,7 @@ const PostForm = ({
       setStartDate("");
       setEndDate("");
       setWhere("");
+      setCoords(null);
       setPhotos([]);
       closeForm();
       setIsLoading(false);
@@ -66,10 +77,7 @@ const PostForm = ({
   }
 
   return (
-    <div
-      className="fixed top-0 p-8 flex justify-center items-center h-screen
-     w-screen backdrop-blur-sm bg-black/20 z-50"
-    >
+    <div className="fixed top-0 p-8 flex justify-center items-center h-screen w-screen backdrop-blur-sm bg-black/20 z-50">
       <form
         onSubmit={handleSubmit}
         className="bg-white flex-1 rounded-2xl shadow-2xl w-full max-w-2xl p-8 flex flex-col items-center gap-4 overflow-y-auto max-h-[calc(100vh-2rem)]"
@@ -84,7 +92,7 @@ const PostForm = ({
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center flex-1">
             {isLost ? "Report a Lost Item" : "Report a Found Item"}
           </h1>
-          <div className="w-8" /> {/* placeholder to balance flex */}
+          <div className="w-8" />
         </div>
 
         {/* Post Type Toggle */}
@@ -94,6 +102,7 @@ const PostForm = ({
         <div className="flex flex-col gap-2 w-full">
           <input name="type" value={postType} type="hidden" readOnly />
           <input name="user_id" value={userId} type="hidden" readOnly />
+
           <label className="font-medium text-gray-700">
             {isLost ? "What did you lose?" : "What did you find?"}
           </label>
@@ -117,27 +126,24 @@ const PostForm = ({
             className="w-full border border-gray-300 rounded-lg p-3 h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
           />
 
-          <label className="font-medium text-gray-700">
-            Photos can help a lot!
-          </label>
+          <label className="font-medium text-gray-700">Photos can help a lot!</label>
           <ImageUploadBox photos={photos} setPhotos={setPhotos} />
 
           <label className="font-medium text-gray-700">
             {isLost ? "Where did you last see it?" : "Where did you find it?"}
           </label>
-          <input
-            name="where"
-            type="text"
-            value={where}
-            onChange={(e) => setWhere(e.target.value)}
-            required
-            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+
+          {/* Google Places input */}
+          <PlaceAid
+            onSelect={(place, latLng) => {
+              setWhere(place);
+              if (latLng) setCoords(latLng);
+            }}
           />
 
           <label className="font-medium text-gray-700">
             {isLost ? "When did you last see it?" : "When did you find it?"}
           </label>
-
           <div className="grid grid-cols-2 gap-2">
             <input
               type="date"
@@ -147,7 +153,6 @@ const PostForm = ({
               required
               className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
             />
-
             <input
               type="date"
               name="end_date"
@@ -156,11 +161,9 @@ const PostForm = ({
               className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
             />
           </div>
-
           <p className="text-xs text-gray-500">
             End date is optional. Leave blank if exact day is known.
           </p>
-
         </div>
 
         {/* Submit */}

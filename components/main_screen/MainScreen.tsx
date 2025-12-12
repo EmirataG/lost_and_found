@@ -11,6 +11,8 @@ import { User } from "@supabase/supabase-js";
 import YaleSpinner from "../YaleSpinner";
 import { FaInfoCircle } from "react-icons/fa";
 
+import PlaceAid from "./PlaceAid"
+
 type TypeFilter = "all" | "lost" | "found";
 
 const MainScreen = ({ user }: { user: User }) => {
@@ -37,10 +39,12 @@ const MainScreen = ({ user }: { user: User }) => {
     );
   }
   if (placeFilter) {
-    postsDisplayed = postsDisplayed.filter((post) =>
-      post.where.toLowerCase().includes(placeFilter.toLowerCase())
+    postsDisplayed = postsDisplayed.filter(
+      (post) =>
+        post.where?.toLowerCase().includes(placeFilter.toLowerCase()) ?? false
     );
   }
+  
   if (startDateFilter) {
     postsDisplayed = postsDisplayed.filter(
       (post) => new Date(post.created_at) >= new Date(startDateFilter)
@@ -139,10 +143,12 @@ const MainScreen = ({ user }: { user: User }) => {
             {/* Place */}
             <div className="flex flex-col">
               <label className="font-medium mb-1 text-gray-700">Place</label>
-              <input
-                type="text"
-                onChange={(e) => setPlaceFilter(e.target.value.trim())}
-                className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+              <PlaceAid
+                onSelect={(place, latLng) => {
+                  setPlaceFilter(place);
+                  // You could optionally store coords if you want
+                  // setCoords(latLng);
+                }}
               />
             </div>
           </div>
@@ -178,48 +184,17 @@ const TypeFilterToggle = ({
 }) => {
   return (
     <div className="bg-gray-300 duration-400 rounded-xl flex w-84">
-      <button
-        className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
-          filter === "all"
-            ? "yale-blue-bg text-white"
-            : "text-black hover:bg-gray-400"
-        }`}
-        onClick={() => {
-          if (filter != "all") {
-            setFilter("all");
-          }
-        }}
-      >
-        All
-      </button>
-      <button
-        className={`transition-all py-1 rounded-xl flex-1 ${
-          filter === "lost"
-            ? "yale-blue-bg text-white"
-            : "text-black hover:bg-gray-400"
-        }`}
-        onClick={() => {
-          if (filter != "lost") {
-            setFilter("lost");
-          }
-        }}
-      >
-        Lost
-      </button>
-      <button
-        className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
-          filter === "found"
-            ? "yale-blue-bg text-white"
-            : "text-black hover:bg-gray-400"
-        }`}
-        onClick={() => {
-          if (filter != "found") {
-            setFilter("found");
-          }
-        }}
-      >
-        Found
-      </button>
+      {(["all", "lost", "found"] as TypeFilter[]).map((type) => (
+        <button
+          key={type}
+          className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
+            filter === type ? "yale-blue-bg text-white" : "text-black hover:bg-gray-400"
+          }`}
+          onClick={() => setFilter(type)}
+        >
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </button>
+      ))}
     </div>
   );
 };
