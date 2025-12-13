@@ -69,6 +69,7 @@ const MainScreen = ({ user }: { user: User }) => {
     )
   `,
         )
+        .eq("resolved", false)
         .order("created_at", { ascending: false });
 
       console.log(JSON.stringify(postsData, null, 2));
