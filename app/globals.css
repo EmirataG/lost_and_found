@@ -3,6 +3,11 @@
 body {
   overflow: hidden;
   overscroll-behavior: none;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+button {
+  cursor: pointer;
 }
 
 @theme {

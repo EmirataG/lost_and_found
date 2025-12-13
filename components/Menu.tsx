@@ -28,31 +28,55 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
   return (
     <>
       {formOpen ? (
-        <PostForm userId={userId} closeForm={() => setFormOpen(false)} />
+        <PostForm
+          userId={userId}
+          closeForm={() => setFormOpen(false)}
+        />
       ) : null}
-      <div className="p-4 w-full overflow-scroll flex gap-4 bg-linear-to-r to-blue-200 from-yaleBlue md:h-full md:w-auto md:flex-col md:bg-linear-to-b">
-        <h2 className="text-transparent text-2xl font-semibold ml-2 text-center bg-linear-to-r from-white to-blue-200 bg-clip-text">
+      <div className="flex w-full flex-col gap-4 overflow-scroll bg-linear-to-b from-yaleBlue to-blue-200 p-4 md:h-full md:w-auto md:gap-4">
+        <h2 className="bg-linear-to-r from-white to-blue-200 bg-clip-text text-center text-2xl font-semibold text-transparent">
           Lost @ <span className="font-bold">Yale</span>
         </h2>
-        <button
-          onClick={() => setFormOpen(true)}
-          className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-white hover:text-yaleBlue text-white font-semibold rounded-xl shadow transition-all cursor-pointer"
-        >
-          + New Post
-        </button>
 
-        <div className="border-l border-white md:border-l-0 md:border-t" />
-
-        <MenuLink href="/" name="Home" />
-        <MenuLink href="/my-posts" name="My Posts" />
-        <MenuLink href="/profile" name="Profile" />
-        <MenuLink href="/messages" name="Messages" />
-        <MenuLink href="/about" name="About Lost @ Yale" />
-        {userId ? (
-          <button onClick={logout} className="w-full py-2.5 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow transition-all cursor-pointer mt-4">
-            Log out
+        <div className="flex flex-row gap-4 md:flex-col">
+          <button
+            onClick={() => setFormOpen(true)}
+            className="w-full cursor-pointer rounded-xl bg-yaleBlue px-4 py-2.5 font-semibold text-white shadow transition-all hover:bg-white hover:text-yaleBlue"
+          >
+            + New Post
           </button>
-        ) : null}
+
+          <div className="border-l border-white md:border-t md:border-l-0" />
+
+          <MenuLink
+            href="/"
+            name="Home"
+          />
+          <MenuLink
+            href="/my-posts"
+            name="My Posts"
+          />
+          <MenuLink
+            href="/profile"
+            name="Profile"
+          />
+          <MenuLink
+            href="/messages"
+            name="Messages"
+          />
+          <MenuLink
+            href="/about"
+            name="About Lost @ Yale"
+          />
+          {userId ? (
+            <button
+              onClick={logout}
+              className="mt-4 w-full cursor-pointer rounded-xl bg-red-500 px-4 py-2.5 font-semibold text-white shadow transition-all hover:bg-red-600"
+            >
+              Log out
+            </button>
+          ) : null}
+        </div>
       </div>
     </>
   );
@@ -67,7 +91,7 @@ const MenuLink = ({ href, name }: { href: string; name: string }) => {
   return (
     <Link
       href={href}
-      className={`flex justify-center items-center w-full py-2.5 px-4 font-semibold rounded-xl shadow transition-all text-center cursor-pointer ${colors}`}
+      className={`flex w-full cursor-pointer items-center justify-center rounded-xl px-4 py-2.5 text-center font-semibold shadow transition-all ${colors}`}
     >
       {name}
     </Link>
