@@ -124,12 +124,6 @@ const MyPostCard = ({ post }: { post: PostData }) => {
               <span className="mr-1 font-bold">Where:</span>
               <LocationHoverTooltip location={post.where} />
             </div>
-
-            {post.resolved && (
-              <div className="mt-2 text-center font-semibold text-green-600">
-                Resolved
-              </div>
-            )}
           </div>
         </div>
       </div>
