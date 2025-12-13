@@ -1,46 +1,32 @@
 import { createClient } from "@/utils/supabase/server";
-import { type Photo, type PostInfo } from "@/types";
+import { type PostData } from "@/types";
 
-export async function fetchUserPosts(userId: string): Promise<{
-  posts: PostInfo[];
-  photos: Record<string, string[]>;
-}> {
+export async function fetchUserPosts(userId: string): Promise<PostData[]> {
   const supabase = await createClient();
 
   const { data: userPosts, error: fetchError } = await supabase
     .from("posts")
-    .select("*, user:user_id (name, email)")
+    .select(
+      `
+    *,
+    user:user_id (name, email),
+    photos:photos!photos_post_id_fkey (
+      url
+    )
+  `
+    )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (fetchError) {
     console.log(`Error fetching user posts: ${fetchError}`);
-    return { posts: [], photos: {} };
+    return [];
   }
 
-  const postIds = (userPosts || []).map((p) => p.id);
-
-  if (postIds.length <= 0) {
-    return { posts: [], photos: {} };
-  }
-
-  const { data: photosData, error: photosError } = await supabase
-    .from("photos")
-    .select("post_id,url")
-    .in("post_id", postIds);
-
-  if (photosError && !photosData) {
-    return { posts: [], photos: {} };
-  }
-
-  const grouped: Record<string, string[]> = {};
-  photosData.forEach((photo: Photo) => {
-    if (!grouped[photo.post_id]) grouped[photo.post_id] = [];
-    grouped[photo.post_id].push(photo.url);
-  });
-
-  return {
-    posts: userPosts,
-    photos: grouped,
-  };
+  return userPosts.map((post) => ({
+    ...post,
+    photos: post.photos.map((p: any) => p.url),
+  }));
 }
+
+// export async function updatePost()
