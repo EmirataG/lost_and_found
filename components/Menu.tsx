@@ -3,28 +3,10 @@
 import Link from "next/link";
 import PostForm from "./post_form/PostFrom";
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { usePathname } from "next/navigation";
 
 const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
   const [formOpen, setFormOpen] = useState<boolean>(false);
-  const router = useRouter();
-  const supabase = createClient();
-
-  const logout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error(error);
-        alert("Error signing out");
-        return;
-      }
-      router.push("/");
-    } catch (e) {
-      console.error(e);
-      alert("Error signing out");
-    }
-  };
   return (
     <>
       {formOpen ? (
@@ -68,14 +50,6 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
             href="/about"
             name="About Lost @ Yale"
           />
-          {userId ? (
-            <button
-              onClick={logout}
-              className="mt-4 w-full cursor-pointer rounded-xl bg-red-500 px-4 py-2.5 font-semibold text-white shadow transition-all hover:bg-red-600"
-            >
-              Log out
-            </button>
-          ) : null}
         </div>
       </div>
     </>

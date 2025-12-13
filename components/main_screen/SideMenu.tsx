@@ -55,19 +55,7 @@ const SideMenu = ({ userName, openForm, closeMenu, menuShown }: Props) => {
             >
               Your Posts
             </Link>
-            <Link
-              href="/profile"
-              className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
-            >
-              Profile
-            </Link>
 
-            <Link
-              href="/messages"
-              className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
-            >
-              Messages
-            </Link>
             <Link
               href="/about"
               className="w-full py-2.5 px-4 bg-yaleBlue hover:bg-blue-600 text-white font-semibold rounded-xl shadow transition-all text-center cursor-pointer"
