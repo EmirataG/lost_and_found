@@ -6,6 +6,8 @@ import ImageUploadBox from "./ImageUploadBox";
 import { PostData } from "@/types"; // your merged post type
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 
+import PlaceAid from "@/components/main_screen/PlaceAid";
+
 const UpdatePostForm = ({
   post,
   closeForm,
@@ -31,6 +33,9 @@ const UpdatePostForm = ({
   const [startDate, setStartDate] = useState(initialStartDate);
   const [endDate, setEndDate] = useState(initialEndDate);
   const [where, setWhere] = useState(post.where);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    null,
+  );
   const [photos, setPhotos] = useState<File[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>(
     post.photos || [],
@@ -47,10 +52,16 @@ const UpdatePostForm = ({
       formData.delete("photo");
 
       // Build when string for API (same as PostForm)
-      const whenString = endDate
-        ? `${startDate} → ${endDate}`
-        : startDate;
+      const whenString = endDate ? `${startDate} → ${endDate}` : startDate;
       formData.set("when", whenString);
+
+      formData.append("where", where);
+
+      // Append coordinates if available
+      if (coords) {
+        formData.append("lat", coords.lat.toString());
+        formData.append("lng", coords.lng.toString());
+      }
 
       // Append new photos
       photos.forEach((photo) => {
@@ -155,14 +166,13 @@ const UpdatePostForm = ({
           />
 
           {/* Where */}
-          <label className="font-medium text-gray-700">Where</label>
-          <input
-            name="where"
-            type="text"
-            value={where}
-            onChange={(e) => setWhere(e.target.value)}
-            required
-            className="w-full rounded-lg border border-gray-300 p-3 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          {/* Google Places input */}
+          <PlaceAid
+            prevValue={where}
+            onSelect={(place, latLng) => {
+              setWhere(place);
+              if (latLng) setCoords(latLng);
+            }}
           />
 
           {/* When */}

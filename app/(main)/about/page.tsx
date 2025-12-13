@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import yaleLogo from "@/public/images/yale_logo.png";
 import {
@@ -24,7 +22,7 @@ const AboutPage = () => {
         </div>
 
         {/* Title */}
-        <h1 className="bg-linear-to-r from-yaleBlue to-blue-600 bg-clip-text p-2 text-center text-5xl font-bold text-transparent">
+        <h1 className="p-2 text-center text-5xl font-bold text-yaleBlue">
           Lost @ Yale
         </h1>
         <p className="mb-10 text-center text-xl font-medium text-gray-600">
@@ -121,14 +119,6 @@ const AboutPage = () => {
               safe and respectful.
             </p>
           </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className="w-full rounded-2xl bg-linear-to-r from-blue-400 to-yaleBlue p-8 text-center text-white shadow-xl">
-          <h2 className="mb-3 text-2xl font-bold">Ready to Get Started?</h2>
-          <p className="text-lg opacity-90">
-            Join fellow Bulldogs in making lost and found simple and efficient!
-          </p>
         </div>
       </div>
     </div>

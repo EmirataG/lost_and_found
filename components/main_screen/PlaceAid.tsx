@@ -4,15 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { loadGoogleMaps } from "@/utils/loadGoogleMaps";
 
 type PlaceAidProps = {
+  prevValue?: string;
   onSelect: (
     place: string,
-    latLng: { lat: number; lng: number } | null
+    latLng: { lat: number; lng: number } | null,
   ) => void;
 };
 
-export default function PlaceAid({ onSelect }: PlaceAidProps) {
+export default function PlaceAid({ onSelect, prevValue }: PlaceAidProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
+  const [value, setValue] = useState(prevValue || "");
 
   useEffect(() => {
     loadGoogleMaps()
@@ -27,7 +29,7 @@ export default function PlaceAid({ onSelect }: PlaceAidProps) {
       inputRef.current,
       {
         types: ["geocode"],
-      }
+      },
     );
 
     autocomplete.addListener("place_changed", () => {
@@ -40,6 +42,7 @@ export default function PlaceAid({ onSelect }: PlaceAidProps) {
           }
         : null;
 
+      setValue(formattedAddress);
       onSelect(formattedAddress, latLng);
     });
   }, [ready, onSelect]);
@@ -47,8 +50,10 @@ export default function PlaceAid({ onSelect }: PlaceAidProps) {
   return (
     <input
       ref={inputRef}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
       placeholder="Enter a place"
-      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+      className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
     />
   );
 }

@@ -11,7 +11,7 @@ import { User } from "@supabase/supabase-js";
 import YaleSpinner from "../YaleSpinner";
 import { FaInfoCircle, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
-import PlaceAid from "./PlaceAid"
+import PlaceAid from "./PlaceAid";
 
 type TypeFilter = "all" | "lost" | "found";
 
@@ -43,7 +43,7 @@ const MainScreen = ({ user }: { user: User }) => {
       post.where.toLowerCase().includes(placeFilter.toLowerCase()),
     );
   }
-  
+
   if (startDateFilter) {
     postsDisplayed = postsDisplayed.filter(
       (post) => new Date(post.created_at) >= new Date(startDateFilter),
@@ -95,7 +95,7 @@ const MainScreen = ({ user }: { user: User }) => {
   return (
     <>
       <main className="flex-1 overflow-y-auto">
-        <section className="mx-auto mb-6 flex max-w-4xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
+        <section className="mx-auto mb-6 flex max-w-5xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
           {/* Collapsible Filter Header */}
           <div className="mb-2 flex w-full items-center justify-between">
             <div className="w-20" />
@@ -170,24 +170,13 @@ const MainScreen = ({ user }: { user: User }) => {
               {/* Place */}
               <div className="flex flex-1 flex-col">
                 <label className="mb-1 font-medium text-gray-700">Place</label>
-                <input
-                  type="text"
-                  onChange={(e) => setPlaceFilter(e.target.value.trim())}
-                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
+                <PlaceAid
+                  onSelect={(place, latLng) => {
+                    setPlaceFilter(place);
+                    // setCoords(latLng);
+                  }}
                 />
               </div>
-            </div>
-
-            {/* Place */}
-            <div className="flex flex-col">
-              <label className="font-medium mb-1 text-gray-700">Place</label>
-              <PlaceAid
-                onSelect={(place, latLng) => {
-                  setPlaceFilter(place);
-                  // You could optionally store coords if you want
-                  // setCoords(latLng);
-                }}
-              />
             </div>
           </div>
         </section>
@@ -220,12 +209,14 @@ const TypeFilterToggle = ({
   setFilter: Dispatch<SetStateAction<TypeFilter>>;
 }) => {
   return (
-    <div className="bg-gray-300 duration-400 rounded-xl flex w-84">
+    <div className="flex w-84 rounded-xl bg-gray-300 duration-400">
       {(["all", "lost", "found"] as TypeFilter[]).map((type) => (
         <button
           key={type}
-          className={`transition-all duration-400 py-1 rounded-xl flex-1 ${
-            filter === type ? "yale-blue-bg text-white" : "text-black hover:bg-gray-400"
+          className={`flex-1 rounded-xl py-1 transition-all duration-400 ${
+            filter === type
+              ? "yale-blue-bg text-white"
+              : "text-black hover:bg-gray-400"
           }`}
           onClick={() => setFilter(type)}
         >
