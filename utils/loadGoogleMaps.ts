@@ -1,7 +1,9 @@
 let googleMapsPromise: Promise<void> | null = null;
 
-export function loadGoogleMaps(apiKey: string): Promise<void> {
+export function loadGoogleMaps(): Promise<void> {
   if (googleMapsPromise) return googleMapsPromise;
+
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   googleMapsPromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject("Window is undefined");

@@ -3,18 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { loadGoogleMaps } from "@/utils/loadGoogleMaps";
 
-const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
-
 type PlaceAidProps = {
-    onSelect: (place: string, latLng: { lat: number; lng: number } | null) => void;
-};  
+  onSelect: (
+    place: string,
+    latLng: { lat: number; lng: number } | null
+  ) => void;
+};
 
 export default function PlaceAid({ onSelect }: PlaceAidProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    loadGoogleMaps(GOOGLE_API_KEY)
+    loadGoogleMaps()
       .then(() => setReady(true))
       .catch((err) => console.error("Google Maps failed to load", err));
   }, []);
@@ -22,24 +23,25 @@ export default function PlaceAid({ onSelect }: PlaceAidProps) {
   useEffect(() => {
     if (!ready || !inputRef.current) return;
 
-    const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
-      types: ["geocode"],
-    });
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        types: ["geocode"],
+      }
+    );
 
     autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        const formattedAddress = place.formatted_address || place.name || "";
-        const latLng =
-          place.geometry?.location
-            ? {
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-              }
-            : null;
-      
-        onSelect(formattedAddress, latLng);
-      });
-      
+      const place = autocomplete.getPlace();
+      const formattedAddress = place.formatted_address || place.name || "";
+      const latLng = place.geometry?.location
+        ? {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          }
+        : null;
+
+      onSelect(formattedAddress, latLng);
+    });
   }, [ready, onSelect]);
 
   return (
