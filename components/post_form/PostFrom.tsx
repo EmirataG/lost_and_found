@@ -47,7 +47,7 @@ const PostForm = ({
       const whenString = endDate ? `${startDate} → ${endDate}` : startDate;
       formData.append("when", whenString);
       formData.append("where", where);
-      
+
       // Append coordinates if available
       if (coords) {
         formData.append("lat", coords.lat.toString());
@@ -135,11 +135,12 @@ const PostForm = ({
 
           {/* Google Places input */}
           <PlaceAid
-            onSelect={(place, latLng) => {
-              setWhere(place);
+            onSelect={(value, latLng) => {
+              setWhere(value);
               if (latLng) setCoords(latLng);
             }}
           />
+
 
           <label className="font-medium text-gray-700">
             {isLost ? "When did you last see it?" : "When did you find it?"}

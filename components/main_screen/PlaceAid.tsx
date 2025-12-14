@@ -1,54 +1,49 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { loadGoogleMaps } from "@/utils/loadGoogleMaps";
+import { useEffect } from "react";
 
 type PlaceAidProps = {
-  onSelect: (
-    place: string,
-    latLng: { lat: number; lng: number } | null
-  ) => void;
+  onSelect: (value: string, latLng?: { lat: number; lng: number }) => void;
 };
 
 export default function PlaceAid({ onSelect }: PlaceAidProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [ready, setReady] = useState(false);
-
   useEffect(() => {
-    loadGoogleMaps()
-      .then(() => setReady(true))
-      .catch((err) => console.error("Google Maps failed to load", err));
-  }, []);
+    if (!window.google?.maps?.places) return;
 
-  useEffect(() => {
-    if (!ready || !inputRef.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      inputRef.current,
-      {
+    const autocomplete =
+      new google.maps.places.PlaceAutocompleteElement({
         types: ["geocode"],
-      }
-    );
+      });
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      const formattedAddress = place.formatted_address || place.name || "";
-      const latLng = place.geometry?.location
-        ? {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          }
-        : null;
+    autocomplete.style.width = "100%";
 
-      onSelect(formattedAddress, latLng);
+    autocomplete.addEventListener("gmp-placeselect", async (event: any) => {
+      const place = event.place;
+
+      await place.fetchFields({
+        fields: ["formattedAddress", "location"],
+      });
+
+      const address = place.formattedAddress ?? "";
+      const location = place.location
+        ? { lat: place.location.lat(), lng: place.location.lng() }
+        : undefined;
+
+      onSelect(address, location);
     });
-  }, [ready, onSelect]);
+
+    const container = document.getElementById("place-autocomplete");
+    if (container) container.appendChild(autocomplete);
+
+    return () => {
+      autocomplete.remove();
+    };
+  }, [onSelect]);
 
   return (
-    <input
-      ref={inputRef}
-      placeholder="Enter a place"
-      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 transition"
+    <div
+      id="place-autocomplete"
+      className="border border-gray-300 rounded-lg p-2 focus-within:ring-2 focus-within:ring-blue-500 transition"
     />
   );
 }
