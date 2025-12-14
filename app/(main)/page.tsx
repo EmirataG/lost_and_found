@@ -10,7 +10,7 @@ const Page = async () => {
   }
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <header className="mb-6 text-center">
         <h1 className="text-3xl font-semibold text-yaleBlue">
           Welcome to the Lost & Found board!

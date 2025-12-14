@@ -12,21 +12,17 @@ const ImageContainer = ({ urls }: { urls: string[] }) => {
   return (
     <>
       <div
-        className="
-          relative w-full h-[300px] sm:h-[350px] lg:h-[400px]
-          rounded-lg overflow-hidden
-          bg-black/70
-        "
+        className="relative h-[300px] w-full overflow-hidden rounded-lg bg-black/70 sm:h-[350px] lg:h-[400px]"
         onMouseEnter={() => setArrowsShown(true)}
         onMouseLeave={() => setArrowsShown(false)}
       >
-        <div className="absolute inset-0 bg-black/60 z-0 rounded-lg" />
+        <div className="absolute inset-0 z-0 rounded-lg bg-black/60" />
 
         <Image
           src={currentImage}
           alt="post image"
           fill
-          className="object-cover select-none cursor-pointer z-10"
+          className="z-10 cursor-pointer object-cover select-none"
           onClick={() => setExpanded(true)}
         />
 
@@ -35,11 +31,7 @@ const ImageContainer = ({ urls }: { urls: string[] }) => {
             <FaArrowAltCircleLeft
               size={32}
               color="white"
-              className={`
-            absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer
-            transition-all duration-300 z-20
-            ${arrowsShown ? "opacity-100" : "opacity-0 pointer-events-none"}
-          `}
+              className={`absolute top-1/2 left-2 z-20 -translate-y-1/2 cursor-pointer transition-all duration-300 ${arrowsShown ? "opacity-100" : "pointer-events-none opacity-0"} `}
               onClick={(event) => {
                 event.stopPropagation();
                 setImageIndex((prev) => (prev <= 0 ? lastIndex : prev - 1));
@@ -49,11 +41,7 @@ const ImageContainer = ({ urls }: { urls: string[] }) => {
             <FaArrowAltCircleRight
               size={32}
               color="white"
-              className={`
-            absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer
-            transition-all duration-300 z-20
-            ${arrowsShown ? "opacity-100" : "opacity-0 pointer-events-none"}
-          `}
+              className={`absolute top-1/2 right-2 z-20 -translate-y-1/2 cursor-pointer transition-all duration-300 ${arrowsShown ? "opacity-100" : "pointer-events-none opacity-0"} `}
               onClick={(event) => {
                 event.stopPropagation();
                 setImageIndex((prev) => (prev >= lastIndex ? 0 : prev + 1));
@@ -89,7 +77,7 @@ const ExpandedImageContainer = ({
   const currentImage = urls[imageIndex];
   return (
     <div
-      className="p-6 gap-6 flex justify-between items-center absolute top-0 left-0 h-screen w-screen backdrop-blur-sm bg-black/70 z-50"
+      className="absolute top-0 left-0 z-50 flex h-screen w-screen items-center justify-between gap-6 bg-black/70 p-6 backdrop-blur-sm"
       onClick={close}
     >
       <FaArrowAltCircleLeft
@@ -101,11 +89,11 @@ const ExpandedImageContainer = ({
         onClick={(event) => {
           event.stopPropagation();
           setImageIndex((prevImageIndex) =>
-            prevImageIndex <= 0 ? lastIndex : prevImageIndex - 1
+            prevImageIndex <= 0 ? lastIndex : prevImageIndex - 1,
           );
         }}
       />
-      <div className="bg-amber-100 overflow-hidden flex shadow-lg">
+      <div className="flex overflow-hidden bg-amber-100 shadow-lg">
         <Image
           src={currentImage}
           alt={"post image"}
@@ -124,7 +112,7 @@ const ExpandedImageContainer = ({
         onClick={(event) => {
           event.stopPropagation();
           setImageIndex((prevImageIndex) =>
-            prevImageIndex >= lastIndex ? 0 : prevImageIndex + 1
+            prevImageIndex >= lastIndex ? 0 : prevImageIndex + 1,
           );
         }}
       />

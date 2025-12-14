@@ -16,14 +16,14 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
         />
       ) : null}
       <div className="flex w-full flex-col gap-4 bg-linear-to-b from-yaleBlue to-blue-200 p-4 md:h-full md:w-auto md:gap-4 md:overflow-scroll">
-        <h2 className="bg-linear-to-r from-white to-blue-200 bg-clip-text text-center text-2xl font-semibold text-transparent">
-          Lost @ <span className="font-bold">Yale</span>
+        <h2 className="bg-linear-to-r from-white to-blue-200 bg-clip-text text-center text-2xl font-bold text-transparent">
+          Lost @ Yale
         </h2>
 
         <div className="flex flex-row gap-4 overflow-x-auto md:flex-col md:overflow-x-visible">
           <button
             onClick={() => setFormOpen(true)}
-            className="flex-shrink-0 cursor-pointer whitespace-nowrap rounded-xl bg-yaleBlue px-4 py-2.5 font-semibold text-white shadow transition-all hover:bg-white hover:text-yaleBlue md:w-full"
+            className="shrink-0 cursor-pointer rounded-xl bg-yaleBlue px-4 py-2.5 font-semibold whitespace-nowrap text-white shadow transition-all hover:bg-white hover:text-yaleBlue md:w-full"
           >
             + New Post
           </button>
@@ -65,7 +65,7 @@ const MenuLink = ({ href, name }: { href: string; name: string }) => {
   return (
     <Link
       href={href}
-      className={`flex flex-shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-xl px-4 py-2.5 text-center font-semibold shadow transition-all md:w-full ${colors}`}
+      className={`flex shrink-0 cursor-pointer items-center justify-center rounded-xl px-4 py-2.5 text-center font-semibold whitespace-nowrap shadow transition-all md:w-full ${colors}`}
     >
       {name}
     </Link>

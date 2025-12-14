@@ -18,7 +18,7 @@ const PostCard = ({ post }: { post: PostData }) => {
       ) : null}
 
       {/* Info Section */}
-      <div className="flex max-h-[450px] min-h-[250px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 lg:max-h-full">
+      <div className="flex h-[300px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 sm:h-[350px] lg:h-[400px]">
         <div className="flex shrink-0 items-center justify-between gap-4">
           <section>
             <h3 className="text-justify text-xl font-semibold">{post.title}</h3>
@@ -52,15 +52,21 @@ const PostCard = ({ post }: { post: PostData }) => {
         </p>
 
         {/* When Where */}
-        <div className="mt-auto grid grid-cols-2 bg-yaleBlue text-white text-sm font-medium rounded-lg overflow-visible">
-          <div className="flex items-center justify-center px-4 py-2 border-r border-white/40">
-            <FaClock className="mr-1.5 text-white" size={14} />
-            <span className="font-bold mr-1">When:</span> {post.when}
+        <div className="mt-auto grid grid-cols-2 overflow-visible rounded-lg bg-yaleBlue text-sm font-medium text-white">
+          <div className="flex items-center justify-center border-r border-white/40 px-4 py-2">
+            <FaClock
+              className="mr-1.5 text-white"
+              size={14}
+            />
+            <span className="mr-1 font-bold">When:</span> {post.when}
           </div>
 
-          <div className="flex items-center justify-center px-4 py-2 relative">
-            <FaMapMarkerAlt className="mr-1.5 text-white" size={14} />
-            <span className="font-bold mr-1">Where:</span>
+          <div className="relative flex items-center justify-center px-4 py-2">
+            <FaMapMarkerAlt
+              className="mr-1.5 text-white"
+              size={14}
+            />
+            <span className="mr-1 font-bold">Where:</span>
             <LocationHoverTooltip location={post.where} />
           </div>
         </div>

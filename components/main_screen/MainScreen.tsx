@@ -93,111 +93,105 @@ const MainScreen = ({ user }: { user: User }) => {
   }, []);
 
   return (
-    <>
-      <main className="flex-1 overflow-y-auto">
-        <section className="mx-auto mb-6 flex max-w-5xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
-          {/* Collapsible Filter Header */}
-          <div className="mb-2 flex w-full items-center justify-between">
-            <div className="w-20" />
-            <TypeFilterToggle
-              filter={typeFilter}
-              setFilter={setTypeFilter}
-            />
-            <button
-              onClick={() => setFiltersExpanded(!filtersExpanded)}
-              className="flex w-20 items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100"
-              aria-label={
-                filtersExpanded ? "Collapse filters" : "Expand filters"
-              }
-            >
-              <span className="font-medium">Filters</span>
-              {filtersExpanded ? (
-                <FaChevronUp size={14} />
-              ) : (
-                <FaChevronDown size={14} />
-              )}
-            </button>
-          </div>
-
-          {/* Collapsible Filter Content */}
-          <div
-            className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
-              filtersExpanded
-                ? "max-h-[500px] opacity-100"
-                : "max-h-0 opacity-0"
-            }`}
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col p-6">
+      <section className="mb-6 flex max-w-5xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
+        {/* Collapsible Filter Header */}
+        <div className="mb-2 flex w-full items-center justify-between">
+          <div className="w-20" />
+          <TypeFilterToggle
+            filter={typeFilter}
+            setFilter={setTypeFilter}
+          />
+          <button
+            onClick={() => setFiltersExpanded(!filtersExpanded)}
+            className="flex w-20 items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100"
+            aria-label={filtersExpanded ? "Collapse filters" : "Expand filters"}
           >
-            <div className="flex flex-col gap-4 lg:flex-row lg:justify-stretch">
-              {/* Title */}
-              <div className="flex flex-1 flex-col">
-                <label className="mb-1 font-medium text-gray-700">Title</label>
-                <input
-                  type="text"
-                  onChange={(e) => setTitleFilter(e.target.value.trim())}
-                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
+            <span className="font-medium">Filters</span>
+            {filtersExpanded ? (
+              <FaChevronUp size={14} />
+            ) : (
+              <FaChevronDown size={14} />
+            )}
+          </button>
+        </div>
+
+        {/* Collapsible Filter Content */}
+        <div
+          className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
+            filtersExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:justify-stretch">
+            {/* Title */}
+            <div className="flex flex-1 flex-col">
+              <label className="mb-1 font-medium text-gray-700">Title</label>
+              <input
+                type="text"
+                onChange={(e) => setTitleFilter(e.target.value.trim())}
+                className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Date Range Section */}
+            <div className="flex flex-1 flex-col">
+              <div className="mb-1 flex items-center gap-2">
+                <label className="font-medium text-gray-700">
+                  When was the item lost / found?
+                </label>
+                <FaInfoCircle
+                  className="cursor-pointer text-gray-500"
+                  title="If only one date is selected, an exact match is used. If both are given, it becomes a date range."
+                  size={14}
                 />
               </div>
 
-              {/* Date Range Section */}
-              <div className="flex flex-1 flex-col">
-                <div className="mb-1 flex items-center gap-2">
-                  <label className="font-medium text-gray-700">
-                    When was the item lost / found?
-                  </label>
-                  <FaInfoCircle
-                    className="cursor-pointer text-gray-500"
-                    title="If only one date is selected, an exact match is used. If both are given, it becomes a date range."
-                    size={14}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="date"
-                    onChange={(e) => setStartDateFilter(e.target.value)}
-                    className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
-                    placeholder="Start Date"
-                  />
-                  <input
-                    type="date"
-                    onChange={(e) => setEndDateFilter(e.target.value)}
-                    className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
-                    placeholder="End Date (optional)"
-                  />
-                </div>
-              </div>
-
-              {/* Place */}
-              <div className="flex flex-1 flex-col">
-                <label className="mb-1 font-medium text-gray-700">Place</label>
-                <PlaceAid
-                  onSelect={(place, latLng) => {
-                    setPlaceFilter(place);
-                    // setCoords(latLng);
-                  }}
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="date"
+                  onChange={(e) => setStartDateFilter(e.target.value)}
+                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
+                  placeholder="Start Date"
+                />
+                <input
+                  type="date"
+                  onChange={(e) => setEndDateFilter(e.target.value)}
+                  className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
+                  placeholder="End Date (optional)"
                 />
               </div>
             </div>
-          </div>
-        </section>
-        {loading ? (
-          <div className="flex h-screen items-center justify-center">
-            <YaleSpinner />
-          </div>
-        ) : postsDisplayed.length === 0 ? (
-          <p>No lost items found.</p>
-        ) : (
-          <div className="mx-auto w-full max-w-5xl space-y-6 px-4">
-            {postsDisplayed.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
+
+            {/* Place */}
+            <div className="flex flex-1 flex-col">
+              <label className="mb-1 font-medium text-gray-700">Place</label>
+              <PlaceAid
+                onSelect={(place, latLng) => {
+                  setPlaceFilter(place);
+                  // setCoords(latLng);
+                }}
               />
-            ))}
+            </div>
           </div>
-        )}
-      </main>
-    </>
+        </div>
+      </section>
+      {loading ? (
+        <div className="flex h-screen items-center justify-center">
+          <YaleSpinner />
+        </div>
+      ) : postsDisplayed.length === 0 ? (
+        <p>No lost items found.</p>
+      ) : (
+        <div className="mx-auto w-full max-w-5xl flex-1 space-y-6">
+          {postsDisplayed.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+            />
+          ))}
+        </div>
+      )}
+    </main>
   );
 };
 

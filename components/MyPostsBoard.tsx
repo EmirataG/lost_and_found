@@ -19,13 +19,13 @@ const MyPostsBoard = ({ posts }: { posts: PostData[] }) => {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-4 py-4">
+    <div className="flex flex-1 flex-col items-center gap-4 p-6">
       <FilterToggle
         filter={filter}
         setFilter={setFilter}
       />
       {postsShown.length > 0 ? (
-        <div className="mx-auto w-full max-w-5xl space-y-6 px-4">
+        <div className="mx-auto w-full max-w-5xl space-y-6">
           {postsShown.map((post, index) => (
             <MyPostCard
               post={post}
