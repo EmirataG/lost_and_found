@@ -34,11 +34,6 @@ export type PostData = {
   };
 };
 
-export type Photo = {
-  post_id: string;
-  url: string;
-};
-
 export type PostType = "lost" | "found";
 
 export type PostFilter = "all" | "unresolved" | "resolved";
