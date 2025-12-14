@@ -18,7 +18,7 @@ const PostCard = ({ post }: { post: PostData }) => {
       ) : null}
 
       {/* Info Section */}
-      <div className="flex h-[300px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 sm:h-[350px] lg:h-[400px]">
+      <div className="flex max-h-[300px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 sm:max-h-[350px] lg:max-h-[400px]">
         <div className="flex shrink-0 items-center justify-between gap-4">
           <section>
             <h3 className="text-justify text-xl font-semibold">{post.title}</h3>

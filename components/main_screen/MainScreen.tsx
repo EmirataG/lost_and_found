@@ -119,7 +119,9 @@ const MainScreen = ({ user }: { user: User }) => {
         {/* Collapsible Filter Content */}
         <div
           className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
-            filtersExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            filtersExpanded
+              ? "max-h-[500px] p-2 opacity-100"
+              : "max-h-0 p-0 opacity-0"
           }`}
         >
           <div className="flex flex-col gap-4 lg:flex-row lg:justify-stretch">

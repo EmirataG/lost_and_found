@@ -53,7 +53,7 @@ const MyPostCard = ({ post }: { post: PostData }) => {
         ) : null}
 
         {/* Info Section */}
-        <div className="flex max-h-[450px] min-h-[250px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 lg:max-h-full">
+        <div className="flex max-h-[300px] flex-1 flex-col gap-2 rounded-lg bg-blue-100 p-4 sm:max-h-[350px] lg:max-h-[400px]">
           {/* Top Section (fixed) */}
           <div className="flex shrink-0 items-center justify-between gap-4">
             <div className="flex items-center gap-2">
