@@ -19,6 +19,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   const [text, setText] = useState("");
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const supabase = createClient();
   const router = useRouter();
 
@@ -44,6 +45,11 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   };
 
   useEffect(() => {
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    loadUser();
     loadMessages();
     loadConversation();
     const interval = setInterval(loadMessages, 4000);
@@ -111,44 +117,74 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <button onClick={() => router.back()} className="mb-3 text-sm text-gray-600">Back</button>
-      <div className="border rounded p-3 h-[60vh] overflow-y-auto flex flex-col gap-3">
+    <div className="p-6 h-full flex flex-col">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-3">
         {messages.map((m) => {
           const p = participants.find((x) => x.user_id === m.sender_id);
           const avatar = p?.user?.avatar_url || `https://www.gravatar.com/avatar/?d=mp&s=64`;
-          return (
-            <div key={m.id} className="p-2 bg-gray-100 rounded">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden bg-gray-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={avatar} alt={senderName(m.sender_id)} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs text-gray-500 font-semibold">{senderName(m.sender_id)}</div>
-                        <div className="mt-1">{m.body}</div>
-                        {m.attachments && m.attachments.length > 0 ? (
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {m.attachments.map((a: any) => (
-                              <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="inline-block border rounded p-1 text-sm">
-                                {a.filename || a.url}
-                              </a>
-                            ))}
-                          </div>
-                        ) : null}
-                  <div className="text-xs text-gray-400 mt-1">{new Date(m.created_at).toLocaleString()}</div>
+          const isOwnMessage = currentUserId && m.sender_id === currentUserId;
+
+          if (isOwnMessage) {
+            // Own message - right-aligned, blue background
+            return (
+              <div key={m.id} className="flex justify-end">
+                <div className="max-w-md">
+                  <div className="p-4 bg-yaleBlue text-white rounded-2xl rounded-tr-sm shadow-lg">
+                    <div className="break-words">{m.body}</div>
+                    {m.attachments && m.attachments.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {m.attachments.map((a: any) => (
+                          <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-white/30 rounded-lg p-2 bg-white/10 hover:bg-white/20 transition text-sm font-medium text-white">
+                            📎 {a.filename || a.url}
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="text-xs text-gray-500 font-medium mt-1 text-right">{new Date(m.created_at).toLocaleString()}</div>
                 </div>
               </div>
-            </div>
-          );
+            );
+          } else {
+            // Received message - left-aligned, gray background
+            return (
+              <div key={m.id} className="flex justify-start">
+                <div className="flex items-start gap-3 max-w-md">
+                  <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden bg-gray-200">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={avatar} alt={senderName(m.sender_id)} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-xs text-gray-600 font-semibold mb-1">{senderName(m.sender_id)}</div>
+                    <div className="p-4 bg-gray-100 rounded-2xl rounded-tl-sm shadow">
+                      <div className="break-words">{m.body}</div>
+                      {m.attachments && m.attachments.length > 0 ? (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {m.attachments.map((a: any) => (
+                            <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-gray-300 rounded-lg p-2 bg-white hover:bg-gray-50 transition text-sm font-medium text-gray-700">
+                              📎 {a.filename || a.url}
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="text-xs text-gray-500 font-medium mt-1">{new Date(m.created_at).toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
         })}
       </div>
 
-            <div className="mt-3 flex gap-2 items-center">
-              <input value={text} onChange={(e) => setText(e.target.value)} className="flex-1 p-2 border rounded" placeholder="Write a message..." />
-              <input type="file" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} />
-              <button onClick={send} className="px-3 py-2 bg-yaleBlue text-white rounded">Send</button>
-            </div>
+      <div className="mt-4 flex gap-3 items-center flex-shrink-0">
+              <input value={text} onChange={(e) => setText(e.target.value)} className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition placeholder-gray-400" placeholder="Write a message..." />
+              <label className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer inline-flex items-center gap-2 font-medium text-gray-700">
+                📎 {files.length > 0 ? `${files.length} file${files.length > 1 ? 's' : ''}` : 'Attach'}
+                <input type="file" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} className="hidden" />
+              </label>
+              <button onClick={send} className="px-6 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95 disabled:opacity-50">Send</button>
+      </div>
     </div>
   );
 };

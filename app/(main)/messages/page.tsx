@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function MessagesPage() {
   return (
-    <main className="p-6">
+    <main className="h-full overflow-hidden">
       <MessagesLayout />
     </main>
   );

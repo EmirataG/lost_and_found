@@ -86,23 +86,23 @@ const MessagesPanel = () => {
   };
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Messages</h2>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Messages</h2>
 
       <section className="mb-6">
-        <h3 className="font-semibold mb-2">Start a connection</h3>
+        <h3 className="font-bold text-gray-900 mb-3">Start a connection</h3>
         <div className="flex gap-2">
-          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="User email" className="p-2 border rounded flex-1" />
-          <button onClick={sendRequest} className="px-3 py-2 bg-yaleBlue text-white rounded">Send request</button>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="User email" className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition placeholder-gray-400" />
+          <button onClick={sendRequest} className="px-4 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Send request</button>
         </div>
       </section>
 
       <section className="mb-6">
-        <h3 className="font-semibold mb-2">Pending requests</h3>
+        <h3 className="font-bold text-gray-900 mb-3">Pending requests</h3>
         {requests.length === 0 && <div className="text-sm text-gray-600">No pending requests</div>}
         <ul>
           {requests.map((r) => (
-            <li key={r.id} className="flex gap-2 items-center my-2">
+            <li key={r.id} className="flex items-center justify-between gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition my-3">
               <div className="flex items-center gap-3 flex-1">
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -110,15 +110,15 @@ const MessagesPanel = () => {
                 </div>
                 <div className="">From: {r.requester?.name || r.requester_id}</div>
               </div>
-              <button onClick={() => respond(r.id, "accept")} className="px-2 py-1 bg-green-500 text-white rounded">Accept</button>
-              <button onClick={() => respond(r.id, "reject")} className="px-2 py-1 bg-red-500 text-white rounded">Reject</button>
+              <button onClick={() => respond(r.id, "accept")} className="px-3 py-2 bg-green-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Accept</button>
+              <button onClick={() => respond(r.id, "reject")} className="px-3 py-2 bg-red-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Reject</button>
             </li>
           ))}
         </ul>
       </section>
 
       <section>
-        <h3 className="font-semibold mb-2">Conversations</h3>
+        <h3 className="font-bold text-gray-900 mb-3">Conversations</h3>
         {conversations.length === 0 && <div className="text-sm text-gray-600">No conversations yet</div>}
         <ul>
           {conversations.map((c: any) => {
@@ -139,13 +139,13 @@ const MessagesPanel = () => {
 
             return (
               <li key={c.id} className="my-2">
-                <Link href={`/messages/${c.id}`} className="block p-3 border rounded hover:bg-gray-50 flex items-center gap-3">
+                <Link href={`/messages/${c.id}`} className="block p-4 border border-gray-300 rounded-xl hover:bg-blue-50 hover:border-yaleBlue flex items-center gap-4 transition">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={avatar} alt={display} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-semibold">{display}</div>
+                    <div className="font-semibold text-gray-900">{display}</div>
                     <div className="text-sm text-gray-500">{c.last_message_at ? new Date(c.last_message_at).toLocaleString() : "No messages"}</div>
                   </div>
                 </Link>

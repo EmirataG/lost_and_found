@@ -49,17 +49,17 @@ export default function MessagesLayout() {
   }, []);
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="h-full flex flex-col p-6">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden">
         {/* Left list */}
-        <div className="col-span-1 md:col-span-1">
-          <div className="bg-white rounded shadow p-2 h-[70vh] overflow-y-auto">
+        <div className="col-span-1 md:col-span-1 flex flex-col overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-300 shadow-2xl flex-1 flex flex-col overflow-hidden">
             {/* Requests area */}
-            <div className="px-2 py-2 border-b">
-              <h3 className="text-lg font-semibold">Requests</h3>
+            <div className="px-6 py-4 border-b-2 border-gray-200 flex-shrink-0">
+              <h3 className="text-lg font-bold text-gray-900">Requests</h3>
               <div className="mt-2">
                 <div className="flex gap-2">
-                  <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="User email" className="p-2 border rounded flex-1" />
+                  <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="User email" className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition placeholder-gray-400" />
                   <button onClick={async () => {
                     try {
                       const res = await fetch('/api/connections/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ receiver_email: email }) });
@@ -74,17 +74,17 @@ export default function MessagesLayout() {
                       console.error(e);
                       alert('Error sending request');
                     }
-                  }} className="px-3 py-2 bg-yaleBlue text-white rounded">Send</button>
+                  }} className="px-4 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Send</button>
                 </div>
 
-                <div className="mt-3">
-                  <h4 className="font-semibold">Pending</h4>
+                <div className="mt-4">
+                  <h4 className="font-semibold text-gray-900">Pending</h4>
                   {requests.length === 0 ? (
                     <div className="text-sm text-gray-500">No pending requests</div>
                   ) : (
                     <ul className="mt-2">
                       {requests.map((r) => (
-                        <li key={r.id} className="flex items-center gap-2 mb-2">
+                        <li key={r.id} className="flex items-center justify-between gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition mb-3">
                           <div className="flex items-center gap-3 flex-1">
                             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 shrink-0">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -105,7 +105,7 @@ export default function MessagesLayout() {
                               console.error(e);
                               alert('Error responding');
                             }
-                          }} className="px-2 py-1 bg-green-500 text-white rounded">Accept</button>
+                          }} className="px-3 py-2 bg-green-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Accept</button>
                           <button onClick={async () => {
                             try {
                               const res = await fetch('/api/connections/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: r.id, action: 'reject' }) });
@@ -117,7 +117,7 @@ export default function MessagesLayout() {
                               console.error(e);
                               alert('Error responding');
                             }
-                          }} className="px-2 py-1 bg-red-500 text-white rounded">Reject</button>
+                          }} className="px-3 py-2 bg-red-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Reject</button>
                         </li>
                       ))}
                     </ul>
@@ -126,12 +126,12 @@ export default function MessagesLayout() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-2 py-1">
-              <h3 className="text-lg font-semibold">Conversations</h3>
+            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 flex-shrink-0">
+              <h3 className="text-lg font-bold text-gray-900">Conversations</h3>
               <div className="relative">
-                <button onClick={() => setShowNew((s) => !s)} className="px-2 py-1 bg-yaleBlue text-white rounded">+</button>
+                <button onClick={() => setShowNew((s) => !s)} className="px-4 py-2 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">+</button>
                 {showNew ? (
-                  <div className="absolute right-0 mt-2 w-56 bg-white border rounded shadow z-20">
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-xl shadow-2xl z-20">
                     <div className="p-2 text-sm font-semibold">Start conversation</div>
                     <div className="max-h-48 overflow-y-auto">
                       {connections.length === 0 ? (
@@ -140,7 +140,7 @@ export default function MessagesLayout() {
                         connections.map((c) => {
                           const other = c.other || { id: c.user_id === currentUserId ? c.friend_id : c.user_id };
                           return (
-                            <div key={c.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 cursor-pointer" onClick={async () => {
+                            <div key={c.id} className="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer transition rounded-lg" onClick={async () => {
                               try {
                                 const res = await fetch('/api/conversations/create-or-find', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ other_user_id: other.id }) });
                                 const json = await res.json();
@@ -173,6 +173,7 @@ export default function MessagesLayout() {
                 ) : null}
               </div>
             </div>
+            <div className="flex-1 overflow-y-auto px-6">
             <ul className="mt-2">
               {conversations.length === 0 && <li className="px-2 text-sm text-gray-500">No conversations yet</li>}
               {conversations.map((c) => {
@@ -191,14 +192,14 @@ export default function MessagesLayout() {
                 const avatar = avatarUrl || `https://www.gravatar.com/avatar/?d=mp&s=64`;
 
                 return (
-                  <li key={c.id} className={`p-2 rounded my-1 hover:bg-gray-50 cursor-pointer ${selected === c.id ? "bg-gray-100" : ""}`} onClick={() => setSelected(c.id)}>
+                  <li key={c.id} className={`p-4 rounded-lg my-2 hover:bg-gray-50 cursor-pointer transition border ${selected === c.id ? "bg-blue-50 border-yaleBlue" : "border-transparent hover:border-gray-200"}`} onClick={() => setSelected(c.id)}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={avatar} alt={display} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold">{display}</div>
+                        <div className="font-semibold text-gray-900">{display}</div>
                         <div className="text-sm text-gray-500">{c.last_message_at ? new Date(c.last_message_at).toLocaleString() : "No messages"}</div>
                       </div>
                     </div>
@@ -206,16 +207,17 @@ export default function MessagesLayout() {
                 );
               })}
             </ul>
+            </div>
           </div>
         </div>
 
         {/* Right chat area */}
-        <div className="col-span-1 md:col-span-2">
-          <div className="bg-white rounded shadow h-[70vh] overflow-hidden">
+        <div className="col-span-1 md:col-span-2 flex flex-col overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-300 shadow-2xl flex-1 overflow-hidden flex flex-col">
             {selected ? (
               <ConversationView conversationId={selected} />
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">Select a conversation to view messages</div>
+              <div className="h-full flex items-center justify-center text-gray-600 font-medium">Select a conversation to view messages</div>
             )}
           </div>
         </div>
