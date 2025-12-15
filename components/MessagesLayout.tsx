@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ConversationView from "./ConversationView";
+import SimpleModal from "./SimpleModal";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
@@ -22,6 +23,96 @@ export default function MessagesLayout() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [connections, setConnections] = useState<Array<{ id: string; user_id: string; friend_id: string; other?: { id: string; name?: string; avatar_url?: string } }>>([]);
   const [showNew, setShowNew] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState<"success" | "error">("success");
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (email: string) => {
+    if (!email.trim()) {
+      return "Email is required";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  const checkUserExists = async (email: string) => {
+    try {
+      const { data } = await supabase.from("users").select("id").eq("email", email).single();
+      return !!data;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  const showModal = (title: string, message: string, type: "success" | "error") => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setModalOpen(true);
+  };
+
+  const loadData = async () => {
+    try {
+      const [convRes, reqRes, connRes] = await Promise.all([fetch("/api/conversations"), fetch("/api/connections/requests"), fetch("/api/connections/list")]);
+      const convJson = await convRes.json();
+      const reqJson = await reqRes.json();
+      const connJson = await connRes.json();
+      setConversations(convJson || []);
+      setRequests(reqJson || []);
+      setConnections(connJson || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSendRequest = async () => {
+    setEmailError("");
+    
+    const validationError = validateEmail(email);
+    if (validationError) {
+      setEmailError(validationError);
+      showModal("Invalid Email", validationError, "error");
+      return;
+    }
+
+    const userExists = await checkUserExists(email);
+    if (!userExists) {
+      setEmailError("User does not exist");
+      showModal("User Not Found", "The email address you entered does not exist in our system.", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/connections/request', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ receiver_email: email }) 
+      });
+      const json = await res.json();
+      
+      if (!res.ok || !json.success) {
+        if (json.message?.includes("already connected")) {
+          showModal("Already Connected", "You are already connected with this user.", "error");
+        } else if (json.message?.includes("already a pending request") || json.message?.includes("already been sent")) {
+          showModal("Request Already Sent", "A connection request has already been sent to this user.", "error");
+        } else {
+          showModal("Error", json.message || json.error || "Failed to send request", "error");
+        }
+      } else {
+        showModal("Success", "Connection request sent successfully!", "success");
+        setEmail("");
+        await loadData();
+      }
+    } catch (e) {
+      console.error(e);
+      showModal("Error", "An unexpected error occurred. Please try again.", "error");
+    }
+  };
 
   useEffect(() => {
     async function load() {
@@ -32,17 +123,7 @@ export default function MessagesLayout() {
         // ignore
       }
 
-      try {
-        const [convRes, reqRes, connRes] = await Promise.all([fetch("/api/conversations"), fetch("/api/connections/requests"), fetch("/api/connections/list")]);
-        const convJson = await convRes.json();
-        const reqJson = await reqRes.json();
-        const connJson = await connRes.json();
-        setConversations(convJson || []);
-        setRequests(reqJson || []);
-        setConnections(connJson || []);
-      } catch (err) {
-        console.error(err);
-      }
+      await loadData();
     }
 
     load();
@@ -50,6 +131,28 @@ export default function MessagesLayout() {
 
   return (
     <div className="h-full flex flex-col p-6">
+      <SimpleModal 
+        open={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        title={modalTitle}
+      >
+        <div className={`p-4 rounded-lg ${modalType === "success" ? "bg-green-50" : "bg-red-50"}`}>
+          <p className={`text-sm ${modalType === "success" ? "text-green-800" : "text-red-800"}`}>
+            {modalMessage}
+          </p>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button 
+            onClick={() => setModalOpen(false)} 
+            className={`px-4 py-2 rounded-lg font-semibold text-white ${
+              modalType === "success" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+            }`}
+          >
+            OK
+          </button>
+        </div>
+      </SimpleModal>
+
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden">
         {/* Left list */}
         <div className="col-span-1 md:col-span-1 flex flex-col overflow-hidden">
@@ -58,23 +161,37 @@ export default function MessagesLayout() {
             <div className="px-6 py-4 border-b-2 border-gray-200 flex-shrink-0">
               <h3 className="text-lg font-bold text-gray-900">Requests</h3>
               <div className="mt-2">
-                <div className="flex gap-2">
-                  <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="User email" className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition placeholder-gray-400" />
-                  <button onClick={async () => {
-                    try {
-                      const res = await fetch('/api/connections/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ receiver_email: email }) });
-                      const json = await res.json();
-                      alert(json.message || 'Request sent');
-                      setEmail('');
-                      // reload requests
-                      const r = await fetch('/api/connections/requests');
-                      const rj = await r.json();
-                      setRequests(rj || []);
-                    } catch (e) {
-                      console.error(e);
-                      alert('Error sending request');
-                    }
-                  }} className="px-4 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Send</button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <input 
+                        value={email} 
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setEmailError("");
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && email.trim()) {
+                            handleSendRequest();
+                          }
+                        }}
+                        placeholder="User email" 
+                        className={`w-full border rounded-lg p-3 focus:ring-2 focus:outline-none transition placeholder-gray-400 ${
+                          emailError ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                        }`}
+                      />
+                      {emailError && (
+                        <p className="text-xs text-red-600 mt-1">{emailError}</p>
+                      )}
+                    </div>
+                    <button 
+                      onClick={handleSendRequest}
+                      disabled={!email.trim()}
+                      className="px-4 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    >
+                      Send
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-4">
@@ -96,26 +213,30 @@ export default function MessagesLayout() {
                             try {
                               const res = await fetch('/api/connections/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: r.id, action: 'accept' }) });
                               const json = await res.json();
-                              alert(json.message || 'Accepted');
-                              const r2 = await fetch('/api/connections/requests');
-                              setRequests((await r2.json()) || []);
-                              const convRes = await fetch('/api/conversations');
-                              setConversations((await convRes.json()) || []);
+                              if (!res.ok) {
+                                showModal("Error", json.message || json.error || "Failed to accept request", "error");
+                              } else {
+                                showModal("Success", "Connection request accepted successfully!", "success");
+                                await loadData();
+                              }
                             } catch (e) {
                               console.error(e);
-                              alert('Error responding');
+                              showModal("Error", "An unexpected error occurred. Please try again.", "error");
                             }
                           }} className="px-3 py-2 bg-green-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Accept</button>
                           <button onClick={async () => {
                             try {
                               const res = await fetch('/api/connections/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id: r.id, action: 'reject' }) });
                               const json = await res.json();
-                              alert(json.message || 'Rejected');
-                              const r2 = await fetch('/api/connections/requests');
-                              setRequests((await r2.json()) || []);
+                              if (!res.ok) {
+                                showModal("Error", json.message || json.error || "Failed to reject request", "error");
+                              } else {
+                                showModal("Success", "Connection request rejected.", "success");
+                                await loadData();
+                              }
                             } catch (e) {
                               console.error(e);
-                              alert('Error responding');
+                              showModal("Error", "An unexpected error occurred. Please try again.", "error");
                             }
                           }} className="px-3 py-2 bg-red-500 text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95">Reject</button>
                         </li>
@@ -150,13 +271,13 @@ export default function MessagesLayout() {
                                   const convRes2 = await fetch('/api/conversations');
                                   setConversations((await convRes2.json()) || []);
                                 } else if (json.requestCreated) {
-                                  alert(json.message || 'Connection request created');
+                                  showModal("Request Sent", json.message || "Connection request created. Once accepted you can message.", "success");
                                 } else {
-                                  alert(json.message || 'Unable to open conversation');
+                                  showModal("Error", json.message || "Unable to open conversation", "error");
                                 }
                               } catch (e) {
                                 console.error(e);
-                                alert('Error starting conversation');
+                                showModal("Error", "An unexpected error occurred while starting conversation.", "error");
                               }
                             }}>
                               <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 shrink-0">

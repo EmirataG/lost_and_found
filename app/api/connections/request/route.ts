@@ -22,6 +22,11 @@ export async function POST(request: Request) {
 
     if (!receiverId) return NextResponse.json({ error: "Missing receiver" }, { status: 400 });
 
+    // prevent sending request to yourself
+    if (receiverId === user.id) {
+      return NextResponse.json({ success: false, message: "You cannot send a connection request to yourself" }, { status: 400 });
+    }
+
     // prevent creating request if already connected
     const { data: existingConn } = await supabase
       .from("connections")
@@ -31,7 +36,7 @@ export async function POST(request: Request) {
 
     const alreadyConnected = (existingConn || []).some((r: any) => (r.user_id === user.id && r.friend_id === receiverId) || (r.user_id === receiverId && r.friend_id === user.id));
     if (alreadyConnected) {
-      return NextResponse.json({ success: false, message: "You are already connected" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Error: already connected" }, { status: 400 });
     }
 
     // prevent duplicate pending requests in either direction
@@ -45,7 +50,7 @@ export async function POST(request: Request) {
     if (existingReq && existingReq.length > 0) {
       const req = existingReq[0];
       if (req.status === "pending") {
-        return NextResponse.json({ success: false, message: "There is already a pending request between you and this user" }, { status: 400 });
+        return NextResponse.json({ success: false, message: "A connection request has already been sent" }, { status: 400 });
       }
     }
 
@@ -57,11 +62,21 @@ export async function POST(request: Request) {
       status: "pending",
     }).select().single();
 
-    if (error) throw error;
+    if (error) {
+      // Handle duplicate key constraint violation
+      if (error.code === "23505" || error.message?.includes("duplicate key") || error.message?.includes("unique constraint")) {
+        return NextResponse.json({ success: false, message: "A connection request has already been sent" }, { status: 400 });
+      }
+      throw error;
+    }
 
     return NextResponse.json({ success: true, request: data, message: "Request created" });
   } catch (err: any) {
     console.error(err);
-    return NextResponse.json({ error: err.message || String(err) }, { status: 500 });
+    // Catch any remaining duplicate key errors
+    if (err.code === "23505" || err.message?.includes("duplicate key") || err.message?.includes("unique constraint")) {
+      return NextResponse.json({ success: false, message: "A connection request has already been sent" }, { status: 400 });
+    }
+    return NextResponse.json({ success: false, error: err.message || String(err) }, { status: 500 });
   }
 }

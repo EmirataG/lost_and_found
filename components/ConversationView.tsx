@@ -250,6 +250,12 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send();
+            }
+          }}
           className="flex-1 rounded-lg border border-gray-300 p-3 placeholder-gray-400 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
           placeholder="Write a message..."
         />
