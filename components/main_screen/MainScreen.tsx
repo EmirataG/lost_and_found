@@ -28,14 +28,32 @@ const MainScreen = ({ user }: { user: User }) => {
 
   const userId = user.id;
 
+  // Helper function to parse post.when field (can be "2025-01-15" or "2025-01-15 → 2025-01-20")
+  const parsePostWhen = (whenString: string) => {
+    const parts = whenString.split(" → ");
+    return {
+      start: parts[0] || "",
+      end: parts[1] || parts[0] || "", // If no end date, use start date
+    };
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setTypeFilter("all");
+    setTitleFilter("");
+    setStartDateFilter("");
+    setEndDateFilter("");
+    setPlaceFilter("");
+  };
+
   let postsDisplayed = posts;
 
   if (typeFilter !== "all") {
     postsDisplayed = postsDisplayed.filter((post) => post.type === typeFilter);
   }
-  if (titleFilter) {
+  if (titleFilter.trim()) {
     postsDisplayed = postsDisplayed.filter((post) =>
-      post.title.toLowerCase().includes(titleFilter.toLowerCase()),
+      post.title.toLowerCase().includes(titleFilter.trim().toLowerCase()),
     );
   }
   if (placeFilter) {
@@ -46,16 +64,35 @@ const MainScreen = ({ user }: { user: User }) => {
     );
   }
 
-  if (startDateFilter) {
-    console.log(startDateFilter);
-    postsDisplayed = postsDisplayed.filter(
-      (post) => new Date(post.created_at) >= new Date(startDateFilter),
-    );
-  }
-  if (endDateFilter) {
-    postsDisplayed = postsDisplayed.filter(
-      (post) => new Date(post.created_at) <= new Date(endDateFilter),
-    );
+  // Date filtering - checks if post.when overlaps with filter date range
+  if (startDateFilter || endDateFilter) {
+    postsDisplayed = postsDisplayed.filter((post) => {
+      if (!post.when) return false;
+
+      const { start: postStart, end: postEnd } = parsePostWhen(post.when);
+      const postStartDate = new Date(postStart);
+      const postEndDate = new Date(postEnd);
+
+      // If only start filter is set
+      if (startDateFilter && !endDateFilter) {
+        const filterDate = new Date(startDateFilter);
+        // Post date range must include or be after the filter date
+        return postEndDate >= filterDate;
+      }
+
+      // If only end filter is set
+      if (!startDateFilter && endDateFilter) {
+        const filterDate = new Date(endDateFilter);
+        // Post date range must include or be before the filter date
+        return postStartDate <= filterDate;
+      }
+
+      // Both filters set - check if date ranges overlap
+      const filterStart = new Date(startDateFilter);
+      const filterEnd = new Date(endDateFilter);
+      // Ranges overlap if: post.start <= filter.end AND post.end >= filter.start
+      return postStartDate <= filterEnd && postEndDate >= filterStart;
+    });
   }
 
   useEffect(() => {
@@ -98,7 +135,13 @@ const MainScreen = ({ user }: { user: User }) => {
       <section className="mb-6 flex max-w-5xl flex-col items-center gap-2 rounded-xl border border-gray-300 bg-white p-4 shadow-lg">
         {/* Collapsible Filter Header */}
         <div className="mb-2 flex w-full items-center justify-between">
-          <div className="w-20" />
+          <button
+            onClick={clearFilters}
+            className="flex w-20 items-center justify-center rounded-lg px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100"
+            aria-label="Clear all filters"
+          >
+            <span className="font-medium">Clear</span>
+          </button>
           <TypeFilterToggle
             filter={typeFilter}
             setFilter={setTypeFilter}
@@ -131,7 +174,8 @@ const MainScreen = ({ user }: { user: User }) => {
               <label className="mb-1 font-medium text-gray-700">Title</label>
               <input
                 type="text"
-                onChange={(e) => setTitleFilter(e.target.value.trim())}
+                value={titleFilter}
+                onChange={(e) => setTitleFilter(e.target.value)}
                 className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -144,7 +188,7 @@ const MainScreen = ({ user }: { user: User }) => {
                 </label>
                 <FaInfoCircle
                   className="cursor-pointer text-gray-500"
-                  title="If only one date is selected, an exact match is used. If both are given, it becomes a date range."
+                  title="Filter posts by when the item was lost/found. Select a date range to find items lost/found within that period. Overlapping date ranges will be included."
                   size={14}
                 />
               </div>
@@ -152,12 +196,14 @@ const MainScreen = ({ user }: { user: User }) => {
               <div className="grid grid-cols-2 gap-4">
                 <input
                   type="date"
+                  value={startDateFilter}
                   onChange={(e) => setStartDateFilter(e.target.value)}
                   className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
                   placeholder="Start Date"
                 />
                 <input
                   type="date"
+                  value={endDateFilter}
                   onChange={(e) => setEndDateFilter(e.target.value)}
                   className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
                   placeholder="End Date (optional)"
@@ -169,9 +215,9 @@ const MainScreen = ({ user }: { user: User }) => {
             <div className="flex flex-1 flex-col">
               <label className="mb-1 font-medium text-gray-700">Place</label>
               <PlaceAid
-                onSelect={(place, latLng) => {
+                prevValue={placeFilter}
+                onSelect={(place) => {
                   setPlaceFilter(place);
-                  // setCoords(latLng);
                 }}
               />
             </div>
