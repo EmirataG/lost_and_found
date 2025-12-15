@@ -39,10 +39,13 @@ const MainScreen = ({ user }: { user: User }) => {
     );
   }
   if (placeFilter) {
-    postsDisplayed = postsDisplayed.filter((post) =>
-      post.where.toLowerCase().includes(placeFilter.toLowerCase()),
+    postsDisplayed = postsDisplayed.filter(
+      (post) =>
+        typeof post.where === "string" &&
+        post.where.toLowerCase().includes(placeFilter.toLowerCase()),
     );
   }
+  
 
   if (startDateFilter) {
     postsDisplayed = postsDisplayed.filter(
