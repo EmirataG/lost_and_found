@@ -30,7 +30,7 @@ const AboutPage = () => {
         </p>
 
         {/* Mission Statement Card */}
-        <div className="mb-8 w-full transform rounded-3xl border-2 border-blue-100 bg-white p-8 shadow-xl transition-all hover:shadow-2xl">
+        {/* <div className="mb-8 w-full transform rounded-3xl border-2 border-blue-100 bg-white p-8 shadow-xl transition-all hover:shadow-2xl">
           <h2 className="mb-4 text-center text-2xl font-bold text-yaleBlue">
             Our Mission
           </h2>
@@ -41,7 +41,7 @@ const AboutPage = () => {
             through Fizz posts, pinning up flyers everywhere, or spamming
             GroupMe chats.
           </p>
-        </div>
+        </div> */}
 
         {/* Feature Cards Grid */}
         <div className="mb-8 grid w-full grid-cols-1 gap-6 md:grid-cols-2">

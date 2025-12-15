@@ -23,6 +23,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const supabase = createClient();
   const router = useRouter();
 
@@ -46,6 +47,10 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -192,7 +197,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                     ) : null}
                   </div>
                   <div className="mt-1 text-right text-xs font-medium text-gray-500">
-                    {new Date(m.created_at).toLocaleString()}
+                    {mounted && new Date(m.created_at).toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -236,7 +241,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                       ) : null}
                     </div>
                     <div className="mt-1 text-xs font-medium text-gray-500">
-                      {new Date(m.created_at).toLocaleString()}
+                      {mounted && new Date(m.created_at).toLocaleString()}
                     </div>
                   </div>
                 </div>

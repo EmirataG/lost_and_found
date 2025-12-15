@@ -183,7 +183,7 @@ const MainScreen = ({ user }: { user: User }) => {
           <YaleSpinner />
         </div>
       ) : postsDisplayed.length === 0 ? (
-        <p>No lost items found.</p>
+        <NoPostsFound />
       ) : (
         <div className="mx-auto w-full max-w-5xl flex-1 space-y-6">
           {postsDisplayed.map((post) => (
@@ -220,6 +220,35 @@ const TypeFilterToggle = ({
           {type.charAt(0).toUpperCase() + type.slice(1)}
         </button>
       ))}
+    </div>
+  );
+};
+
+const NoPostsFound = () => {
+  return (
+    <div className="flex flex-1 flex-col justify-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="mx-auto mb-4 size-32 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <circle
+          cx="11"
+          cy="11"
+          r="8"
+        />
+        <line
+          x1="21"
+          y1="21"
+          x2="16.65"
+          y2="16.65"
+        />
+      </svg>
+
+      <span className="text-center text-gray-400">No posts to see here...</span>
     </div>
   );
 };
