@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import PostForm from "./post_form/PostFrom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
@@ -58,8 +58,14 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
 
 const MenuLink = ({ href, name }: { href: string; name: string }) => {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const colors =
-    pathname === href
+    mounted && pathname === href
       ? "bg-white hover:bg-gray-200 text-yaleBlue"
       : "bg-yaleBlue hover:bg-white text-white hover:text-yaleBlue";
   return (

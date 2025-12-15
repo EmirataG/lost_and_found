@@ -22,6 +22,11 @@ export default function PlaceAid({ onSelect, prevValue }: PlaceAidProps) {
       .catch((err) => console.error("Google Maps failed to load", err));
   }, []);
 
+  // Sync with prevValue when it changes (for clearing filters)
+  useEffect(() => {
+    setValue(prevValue || "");
+  }, [prevValue]);
+
   useEffect(() => {
     if (!ready || !inputRef.current) return;
 
@@ -51,7 +56,12 @@ export default function PlaceAid({ onSelect, prevValue }: PlaceAidProps) {
     <input
       ref={inputRef}
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => {
+        const newValue = e.target.value;
+        setValue(newValue);
+        // Also notify parent of manual text input
+        onSelect(newValue, null);
+      }}
       placeholder="Enter a place"
       className="rounded-lg border border-gray-300 p-2 transition focus:ring-2 focus:ring-blue-500"
     />

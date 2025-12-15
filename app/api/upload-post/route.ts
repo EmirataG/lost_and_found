@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { convertHeicToJpg } from "@/utils/convertHeicToJpg";
 
 import { type Photo } from "@/types";
 
@@ -20,6 +21,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
+    // Convert any HEIC images to JPG
+    const convertedPhotos = await Promise.all(
+      photos.map((photo) => convertHeicToJpg(photo))
+    );
+
     const { data: post, error: postError } = await supabase
       .from("posts")
       .insert({
@@ -39,7 +45,7 @@ export async function POST(request: Request) {
     }
 
     const photoPublicUrls: Photo[] = await Promise.all(
-      photos.map(async (photo) => {
+      convertedPhotos.map(async (photo) => {
         const sanitizedName = photo.name
           .replaceAll(" ", "_")
           .replace(/[^\w.-]/g, "");

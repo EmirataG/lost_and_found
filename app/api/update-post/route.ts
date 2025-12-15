@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { convertHeicToJpg } from "@/utils/convertHeicToJpg";
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -26,8 +27,13 @@ export async function POST(req: Request) {
 
     // Upload any new new photos
     if (newPhotos.length > 0) {
+      // Convert any HEIC images to JPG
+      const convertedPhotos = await Promise.all(
+        newPhotos.map((photo) => convertHeicToJpg(photo))
+      );
+
       const photoUrls = await Promise.all(
-        newPhotos.map(async (photo) => {
+        convertedPhotos.map(async (photo) => {
           const sanitizedName = photo.name
             .replaceAll(" ", "_")
             .replace(/[^\w.-]/g, "");
