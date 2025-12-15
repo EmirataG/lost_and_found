@@ -12,7 +12,10 @@ type Message = {
   created_at: string;
 };
 
-type Participant = { user_id: string; user?: { id: string; name?: string; avatar_url?: string } };
+type Participant = {
+  user_id: string;
+  user?: { id: string; name?: string; avatar_url?: string };
+};
 
 const ConversationView = ({ conversationId }: { conversationId: string }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -46,7 +49,9 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setCurrentUserId(user?.id || null);
     };
     loadUser();
@@ -60,35 +65,70 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
     if (!text.trim() && files.length === 0) return;
     try {
       // upload files first (if any)
-      const attachments: Array<{ url: string; filename: string; content_type?: string }> = [];
+      const attachments: Array<{
+        url: string;
+        filename: string;
+        content_type?: string;
+      }> = [];
       for (const file of files) {
         const fileName = `${Date.now()}_${file.name.replaceAll(" ", "_")}`;
         const path = `attachments/${conversationId}/${encodeURIComponent(fileName)}`;
         // try the 'attachments' bucket first
         let uploadError = null;
         try {
-          const { error } = await supabase.storage.from("attachments").upload(path, file);
+          const { error } = await supabase.storage
+            .from("attachments")
+            .upload(path, file);
           if (error) throw error;
-          const { data } = supabase.storage.from("attachments").getPublicUrl(path);
-          attachments.push({ url: data.publicUrl, filename: file.name, content_type: file.type });
+          const { data } = supabase.storage
+            .from("attachments")
+            .getPublicUrl(path);
+          attachments.push({
+            url: data.publicUrl,
+            filename: file.name,
+            content_type: file.type,
+          });
           continue;
         } catch (err: any) {
           uploadError = err;
-          console.warn("attachments bucket upload failed:", err?.message || err);
+          console.warn(
+            "attachments bucket upload failed:",
+            err?.message || err,
+          );
         }
 
         // fallback: try the 'photos' bucket if attachments bucket is missing
-        if (String(uploadError?.message || "").toLowerCase().includes("bucket not found") || String(uploadError || "").toLowerCase().includes("bucket not found")) {
+        if (
+          String(uploadError?.message || "")
+            .toLowerCase()
+            .includes("bucket not found") ||
+          String(uploadError || "")
+            .toLowerCase()
+            .includes("bucket not found")
+        ) {
           try {
             const altPath = `${conversationId}/${encodeURIComponent(fileName)}`;
-            const { error } = await supabase.storage.from("photos").upload(altPath, file);
+            const { error } = await supabase.storage
+              .from("photos")
+              .upload(altPath, file);
             if (error) throw error;
-            const { data } = supabase.storage.from("photos").getPublicUrl(altPath);
-            attachments.push({ url: data.publicUrl, filename: file.name, content_type: file.type });
+            const { data } = supabase.storage
+              .from("photos")
+              .getPublicUrl(altPath);
+            attachments.push({
+              url: data.publicUrl,
+              filename: file.name,
+              content_type: file.type,
+            });
             continue;
           } catch (err2: any) {
-            console.warn("photos bucket fallback failed:", err2?.message || err2);
-            alert("File upload failed: no suitable storage bucket found. Please create a public 'attachments' bucket in Supabase, or contact the developer.");
+            console.warn(
+              "photos bucket fallback failed:",
+              err2?.message || err2,
+            );
+            alert(
+              "File upload failed: no suitable storage bucket found. Please create a public 'attachments' bucket in Supabase, or contact the developer.",
+            );
             continue;
           }
         }
@@ -117,58 +157,87 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   };
 
   return (
-    <div className="p-6 h-full flex flex-col">
-      <div className="flex-1 overflow-y-auto flex flex-col gap-3">
+    <div className="flex h-full flex-col p-6">
+      <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
         {messages.map((m) => {
           const p = participants.find((x) => x.user_id === m.sender_id);
-          const avatar = p?.user?.avatar_url || `https://www.gravatar.com/avatar/?d=mp&s=64`;
+          const avatar =
+            p?.user?.avatar_url || `https://www.gravatar.com/avatar/?d=mp&s=64`;
           const isOwnMessage = currentUserId && m.sender_id === currentUserId;
 
           if (isOwnMessage) {
             // Own message - right-aligned, blue background
             return (
-              <div key={m.id} className="flex justify-end">
+              <div
+                key={m.id}
+                className="flex justify-end"
+              >
                 <div className="max-w-md">
-                  <div className="p-4 bg-yaleBlue text-white rounded-2xl rounded-tr-sm shadow-lg">
+                  <div className="rounded-2xl rounded-tr-sm bg-yaleBlue p-4 text-white shadow-lg">
                     <div className="break-words">{m.body}</div>
                     {m.attachments && m.attachments.length > 0 ? (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {m.attachments.map((a: any) => (
-                          <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-white/30 rounded-lg p-2 bg-white/10 hover:bg-white/20 transition text-sm font-medium text-white">
+                          <a
+                            key={a.id}
+                            href={a.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 p-2 text-sm font-medium text-white transition hover:bg-white/20"
+                          >
                             📎 {a.filename || a.url}
                           </a>
                         ))}
                       </div>
                     ) : null}
                   </div>
-                  <div className="text-xs text-gray-500 font-medium mt-1 text-right">{new Date(m.created_at).toLocaleString()}</div>
+                  <div className="mt-1 text-right text-xs font-medium text-gray-500">
+                    {new Date(m.created_at).toLocaleString()}
+                  </div>
                 </div>
               </div>
             );
           } else {
             // Received message - left-aligned, gray background
             return (
-              <div key={m.id} className="flex justify-start">
-                <div className="flex items-start gap-3 max-w-md">
-                  <div className="w-8 h-8 shrink-0 rounded-full overflow-hidden bg-gray-200">
+              <div
+                key={m.id}
+                className="flex justify-start"
+              >
+                <div className="flex max-w-md items-start gap-3">
+                  <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={avatar} alt={senderName(m.sender_id)} className="w-full h-full object-cover" />
+                    <img
+                      src={avatar}
+                      alt={senderName(m.sender_id)}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs text-gray-600 font-semibold mb-1">{senderName(m.sender_id)}</div>
-                    <div className="p-4 bg-gray-100 rounded-2xl rounded-tl-sm shadow">
+                    <div className="mb-1 text-xs font-semibold text-gray-600">
+                      {senderName(m.sender_id)}
+                    </div>
+                    <div className="rounded-2xl rounded-tl-sm bg-gray-100 p-4 shadow">
                       <div className="break-words">{m.body}</div>
                       {m.attachments && m.attachments.length > 0 ? (
                         <div className="mt-2 flex flex-wrap gap-2">
                           {m.attachments.map((a: any) => (
-                            <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 border border-gray-300 rounded-lg p-2 bg-white hover:bg-gray-50 transition text-sm font-medium text-gray-700">
+                            <a
+                              key={a.id}
+                              href={a.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                            >
                               📎 {a.filename || a.url}
                             </a>
                           ))}
                         </div>
                       ) : null}
                     </div>
-                    <div className="text-xs text-gray-500 font-medium mt-1">{new Date(m.created_at).toLocaleString()}</div>
+                    <div className="mt-1 text-xs font-medium text-gray-500">
+                      {new Date(m.created_at).toLocaleString()}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -177,13 +246,23 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
         })}
       </div>
 
-      <div className="mt-4 flex gap-3 items-center flex-shrink-0">
-              <input value={text} onChange={(e) => setText(e.target.value)} className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none transition placeholder-gray-400" placeholder="Write a message..." />
-              <label className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer inline-flex items-center gap-2 font-medium text-gray-700">
+      <div className="mt-4 flex flex-shrink-0 items-center gap-3">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="flex-1 rounded-lg border border-gray-300 p-3 placeholder-gray-400 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="Write a message..."
+        />
+        {/* <label className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer inline-flex items-center gap-2 font-medium text-gray-700">
                 📎 {files.length > 0 ? `${files.length} file${files.length > 1 ? 's' : ''}` : 'Attach'}
                 <input type="file" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} className="hidden" />
-              </label>
-              <button onClick={send} className="px-6 py-3 bg-yaleBlue text-white rounded-lg font-semibold transition-transform hover:scale-105 active:scale-95 disabled:opacity-50">Send</button>
+              </label> */}
+        <button
+          onClick={send}
+          className="rounded-lg bg-yaleBlue px-6 py-3 font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+        >
+          Send
+        </button>
       </div>
     </div>
   );

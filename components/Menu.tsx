@@ -38,10 +38,10 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
             href="/my-posts"
             name="My Posts"
           />
-          <MenuLink
+          {/* <MenuLink
             href="/profile"
             name="Profile"
-          />
+          /> */}
           <MenuLink
             href="/messages"
             name="Messages"

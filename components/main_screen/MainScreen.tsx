@@ -45,9 +45,9 @@ const MainScreen = ({ user }: { user: User }) => {
         post.where.toLowerCase().includes(placeFilter.toLowerCase()),
     );
   }
-  
 
   if (startDateFilter) {
+    console.log(startDateFilter);
     postsDisplayed = postsDisplayed.filter(
       (post) => new Date(post.created_at) >= new Date(startDateFilter),
     );
