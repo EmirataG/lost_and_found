@@ -47,6 +47,10 @@ const Menu = ({ userId, userName }: { userId: string; userName: string }) => {
             name="Messages"
           />
           <MenuLink
+            href="/stats"
+            name="Stats"
+          />
+          <MenuLink
             href="/about"
             name="About Lost @ Yale"
           />
