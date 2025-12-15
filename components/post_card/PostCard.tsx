@@ -1,12 +1,39 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { type PostData } from "@/types";
 import ImageContainer from "./ImageContainer";
 import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import LocationHoverTooltip from "./LocationHoverTooltip";
+import ConnectionModal from "@/components/ConnectionModal";
 
 const PostCard = ({ post }: { post: PostData }) => {
   const isLost = post.type === "lost";
   const photos = post.photos;
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [contactEmail, setContactEmail] = useState<string | null>(null);
+  const [contactName, setContactName] = useState<string | undefined>(undefined);
+
+  const handleContactClick = async () => {
+    const email = post.user.email;
+    const name = post.user.name;
+    try {
+      // Fire-and-forget: create a connection request to the post owner
+      await fetch("/api/connections/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ receiver_email: email }),
+      });
+    } catch (e) {
+      // non-fatal, still allow messaging
+      console.error("Failed to create connection request", e);
+    }
+    setContactEmail(email);
+    setContactName(name);
+    setModalOpen(true);
+  };
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden rounded-xl border border-gray-300 bg-white p-6 shadow-2xl lg:flex-row">
@@ -37,12 +64,12 @@ const PostCard = ({ post }: { post: PostData }) => {
               {isLost ? "Lost" : "Found"}
             </span>
 
-            <a
-              href={`mailto:${post.user.email}`}
+            <button
+              onClick={handleContactClick}
               className="rounded-full border border-transparent bg-yaleBlue px-3 py-1 text-center text-sm font-medium text-white transition hover:border-yaleBlue hover:bg-white hover:text-yaleBlue"
             >
               {isLost ? "Found it?" : "It's yours?"}
-            </a>
+            </button>
           </div>
         </div>
 
@@ -77,6 +104,15 @@ const PostCard = ({ post }: { post: PostData }) => {
           </div>
         )}
       </div>
+      {/* Compose / Send initial message */}
+      <ConnectionModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        targetEmail={contactEmail ?? ""}
+        targetName={contactName}
+        postTitle={post.title}
+        postType={post.type as any}
+      />
     </div>
   );
 };
