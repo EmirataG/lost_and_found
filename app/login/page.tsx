@@ -3,17 +3,17 @@ import WelcomeHero from "@/components/WelcomeHero";
 
 export default function LoginPage() {
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-linear-to-b from-yaleBlue to-blue-200 text-white">
+    <div className="flex h-screen flex-col items-center justify-center bg-linear-to-b from-yaleBlue to-blue-200 text-white">
       <WelcomeHero />
       <form
         action={signInWithGoogle}
-        className="m-6 flex flex-col gap-6 items-center"
+        className="m-6 flex flex-col items-center gap-6"
       >
         <button
           type="submit"
-          className="w-64 py-4 bg-yaleBlue text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-blue-500 hover:shadow-xl transition-all"
+          className="w-64 rounded-xl bg-yaleBlue py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-blue-500 hover:shadow-xl"
         >
-          Continue with CAS
+          Continue
         </button>
       </form>
     </div>
