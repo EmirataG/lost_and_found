@@ -13,7 +13,14 @@ type Props = {
   postType?: PostType;
 };
 
-export default function ConnectionModal({ open, onClose, targetEmail, targetName, postTitle, postType }: Props) {
+export default function ConnectionModal({
+  open,
+  onClose,
+  targetEmail,
+  targetName,
+  postTitle,
+  postType,
+}: Props) {
   const defaultMessage = useMemo(() => {
     const titled = postTitle ? ` (${postTitle})` : "";
     if (postType === "lost") {
@@ -55,11 +62,14 @@ export default function ConnectionModal({ open, onClose, targetEmail, targetName
       if (!conversationId) throw new Error("No conversation id returned");
 
       // 2) Send initial message
-      const msgRes = await fetch(`/api/conversations/${conversationId}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: message }),
-      });
+      const msgRes = await fetch(
+        `/api/conversations/${conversationId}/messages`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ body: message }),
+        },
+      );
 
       if (!msgRes.ok) {
         const text = await msgRes.text();
@@ -75,22 +85,44 @@ export default function ConnectionModal({ open, onClose, targetEmail, targetName
   };
 
   return (
-    <SimpleModal open={open} onClose={onClose} title={`Message ${targetName ?? targetEmail}`}>
-      <form onSubmit={handleSend} className="flex flex-col gap-3">
+    <SimpleModal
+      open={open}
+      onClose={onClose}
+      title={`Message ${targetName ?? targetEmail}`}
+    >
+      <form
+        onSubmit={handleSend}
+        className="flex flex-col gap-3"
+      >
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={6}
-          className="w-full rounded border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-yaleBlue"
+          className="w-full rounded border border-gray-300 p-2 text-sm focus:ring-2 focus:ring-yaleBlue focus:outline-none"
         />
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-sm text-red-600">{error}</div>}
         <div className="flex justify-end gap-2">
-          <button type="button" onClick={onClose} disabled={loading} className="rounded border px-3 py-1 text-sm">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="rounded border px-3 py-1 text-sm"
+          >
             Cancel
           </button>
-          <button type="submit" disabled={loading} className="rounded bg-yaleBlue px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded bg-yaleBlue px-3 py-1 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+          >
             {loading ? "Sending…" : "Send message"}
           </button>
+          <a
+            href={`mailto:${targetEmail}`}
+            className="rounded bg-yaleBlue px-3 py-1 text-sm font-medium text-white hover:opacity-90"
+          >
+            Prefer email?
+          </a>
         </div>
       </form>
     </SimpleModal>
