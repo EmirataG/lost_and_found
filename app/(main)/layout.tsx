@@ -18,7 +18,9 @@ export default async function MainLayout({
         userId={user.id}
         userName={user.user_metadata.name}
       />
-      <div className="flex flex-1 flex-col overflow-auto p-4">{children}</div>
+      <div className="bg flex flex-1 flex-col overflow-auto p-4">
+        {children}
+      </div>
     </div>
   );
 }

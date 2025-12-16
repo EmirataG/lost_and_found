@@ -177,21 +177,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                 <div className="max-w-md">
                   <div className="rounded-2xl rounded-tr-sm bg-yaleBlue p-4 text-white shadow-lg">
                     <div className="wrap-break-word">{m.body}</div>
-                    {/* {m.attachments && m.attachments.length > 0 ? (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {m.attachments.map((a: any) => (
-                          <a
-                            key={a.id}
-                            href={a.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 p-2 text-sm font-medium text-white transition hover:bg-white/20"
-                          >
-                            📎 {a.filename || a.url}
-                          </a>
-                        ))}
-                      </div>
-                    ) : null} */}
                   </div>
                   <div className="mt-1 text-right text-xs font-medium text-gray-500">
                     {mounted && new Date(m.created_at).toLocaleString()}
@@ -220,21 +205,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                     </div>
                     <div className="rounded-2xl rounded-tl-sm bg-gray-100 p-4 shadow">
                       <div className="wrap-break-word">{m.body}</div>
-                      {/* {m.attachments && m.attachments.length > 0 ? (
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {m.attachments.map((a: any) => (
-                            <a
-                              key={a.id}
-                              href={a.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white p-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-                            >
-                              📎 {a.filename || a.url}
-                            </a>
-                          ))}
-                        </div>
-                      ) : null} */}
                     </div>
                     <div className="mt-1 text-xs font-medium text-gray-500">
                       {mounted && new Date(m.created_at).toLocaleString()}
@@ -260,10 +230,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
           className="flex-1 rounded-lg border border-gray-300 p-3 placeholder-gray-400 transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
           placeholder="Write a message..."
         />
-        {/* <label className="px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition cursor-pointer inline-flex items-center gap-2 font-medium text-gray-700">
-                📎 {files.length > 0 ? `${files.length} file${files.length > 1 ? 's' : ''}` : 'Attach'}
-                <input type="file" multiple onChange={(e) => { if (e.target.files) setFiles(Array.from(e.target.files)); }} className="hidden" />
-              </label> */}
         <button
           onClick={send}
           className="rounded-lg bg-yaleBlue px-6 py-3 font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"

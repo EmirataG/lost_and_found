@@ -52,7 +52,7 @@ const StatsPage = () => {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col">
       <header className="mb-6 text-center">
         <h1 className="text-3xl font-semibold text-yaleBlue">
           Location Statistics
@@ -80,10 +80,10 @@ const StatsPage = () => {
                       index === 0
                         ? "bg-yellow-500"
                         : index === 1
-                        ? "bg-gray-400"
-                        : index === 2
-                        ? "bg-amber-600"
-                        : "bg-yaleBlue"
+                          ? "bg-gray-400"
+                          : index === 2
+                            ? "bg-amber-600"
+                            : "bg-yaleBlue"
                     }`}
                   >
                     {index + 1}

@@ -21,7 +21,6 @@ const AboutPage = () => {
           />
         </div>
 
-        {/* Title */}
         <h1 className="p-2 text-center text-5xl font-bold text-yaleBlue">
           Lost @ Yale
         </h1>
@@ -29,23 +28,18 @@ const AboutPage = () => {
           Reuniting Yalies with their belongings
         </p>
 
-        {/* Mission Statement Card */}
-        {/* <div className="mb-8 w-full transform rounded-3xl border-2 border-blue-100 bg-white p-8 shadow-xl transition-all hover:shadow-2xl">
+        <div className="mb-8 w-full transform rounded-3xl border-2 border-blue-100 bg-white p-8 shadow-xl transition-all hover:shadow-2xl">
           <h2 className="mb-4 text-center text-2xl font-bold text-yaleBlue">
             Our Mission
           </h2>
           <p className="text-center text-lg leading-relaxed text-gray-700">
             <span className="font-semibold text-yaleBlue">Lost @ Yale</span> is
             a student-built platform designed to help the Yale community
-            reconnect with misplaced items quickly and easily. No more digging
-            through Fizz posts, pinning up flyers everywhere, or spamming
-            GroupMe chats.
+            reconnect with lost items quickly and easily.
           </p>
-        </div> */}
+        </div>
 
-        {/* Feature Cards Grid */}
         <div className="mb-8 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
-          {/* How It Works - Lost Item */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-full bg-red-100 p-3">
@@ -62,7 +56,6 @@ const AboutPage = () => {
             </p>
           </div>
 
-          {/* How It Works - Found Item */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-full bg-green-100 p-3">
@@ -86,7 +79,6 @@ const AboutPage = () => {
             </p>
           </div>
 
-          {/* Community */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-full bg-blue-100 p-3">
@@ -103,7 +95,6 @@ const AboutPage = () => {
             </p>
           </div>
 
-          {/* Responsible Use */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all hover:shadow-xl">
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-full bg-yellow-100 p-3">
