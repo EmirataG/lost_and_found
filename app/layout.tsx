@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Lost @ Yale",
   description: "Reuniting Yalies with their Belonging",
+  icons: {
+    icon: "/yale_logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import yaleLogo from "@/public/images/yale_logo.png";
+import yaleLogo from "@/public/yale_logo.png";
 
 const YaleSpinner = ({ width = 64 }) => {
   return (
