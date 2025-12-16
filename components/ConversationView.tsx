@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 
 type Message = {
@@ -25,7 +23,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const supabase = createClient();
-  const router = useRouter();
 
   const loadMessages = async () => {
     try {
@@ -179,8 +176,8 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
               >
                 <div className="max-w-md">
                   <div className="rounded-2xl rounded-tr-sm bg-yaleBlue p-4 text-white shadow-lg">
-                    <div className="break-words">{m.body}</div>
-                    {m.attachments && m.attachments.length > 0 ? (
+                    <div className="wrap-break-word">{m.body}</div>
+                    {/* {m.attachments && m.attachments.length > 0 ? (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {m.attachments.map((a: any) => (
                           <a
@@ -194,7 +191,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                           </a>
                         ))}
                       </div>
-                    ) : null}
+                    ) : null} */}
                   </div>
                   <div className="mt-1 text-right text-xs font-medium text-gray-500">
                     {mounted && new Date(m.created_at).toLocaleString()}
@@ -211,7 +208,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
               >
                 <div className="flex max-w-md items-start gap-3">
                   <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={avatar}
                       alt={senderName(m.sender_id)}
@@ -223,8 +219,8 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                       {senderName(m.sender_id)}
                     </div>
                     <div className="rounded-2xl rounded-tl-sm bg-gray-100 p-4 shadow">
-                      <div className="break-words">{m.body}</div>
-                      {m.attachments && m.attachments.length > 0 ? (
+                      <div className="wrap-break-word">{m.body}</div>
+                      {/* {m.attachments && m.attachments.length > 0 ? (
                         <div className="mt-2 flex flex-wrap gap-2">
                           {m.attachments.map((a: any) => (
                             <a
@@ -238,7 +234,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
                             </a>
                           ))}
                         </div>
-                      ) : null}
+                      ) : null} */}
                     </div>
                     <div className="mt-1 text-xs font-medium text-gray-500">
                       {mounted && new Date(m.created_at).toLocaleString()}
@@ -251,7 +247,7 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
         })}
       </div>
 
-      <div className="mt-4 flex flex-shrink-0 items-center gap-3">
+      <div className="mt-4 flex shrink-0 items-center gap-3">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
