@@ -1,92 +1,43 @@
-# **Lost @ Yale**
+# Lost @ Yale
 
-_Lost @ Yale_ is a simple platform for Yale students to report lost and found items on campus. Users can log in, post items, browse the board, and contact each other when items are found.
+A platform for Yale students to report and find lost items on campus.
 
-This is the **MVP** version of the application.
+## Setup Instructions
 
----
-
-## **Development Setup**
-
-### **1. Clone the Repository**
-
-```bash
-git clone <repository-url>
-cd lost-at-yale
-```
-
-### **2. Install Dependencies**
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### **3. Create `.env.local`**
+### 2. Create `.env.local` File
 
-You must manually create a `.env.local` file in the project root.
-
-This file stores your **Firebase + app environment variables**.
-It is not shared publicly.
-
-Example structure (values are placeholders):
+Create a `.env.local` file in the project root with the following variables:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=???
-NEXT_PUBLIC_SUPABASE_ANON_KEY=???
-SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET=???
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET=your_google_client_secret
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 ```
 
-### **4. Run the App (Important)**
-
-The app **must run on port 3000** during development.
+### 3. Run the Application
 
 ```bash
 npm run dev
 ```
 
-Visit:
+The app will run on `http://localhost:3000`
 
-```
-http://localhost:3000
-```
-
-If another process is using port 3000, **stop it first** — the app relies on this exact port during OAuth login.
+**IMPORTANT:** Due to current Google OAuth security policies, authentication requests can **only** be made from `http://localhost:3000`. You **must** use port 3000 - the app will not work on any other port (on supabase, we had to list the url origins that were allowed to make requests to Google's auth services; since we do not currently have a domain, we added http://localhost:3000 to the list). If port 3000 is already in use, stop the other process first. This restriction will change to the actual domain name once the site is deployed.
 
 ---
 
-## **Authentication**
+## Features
 
-The app supports **Google Sign-In**.
-
-- At MVP stage, **any Google account** can log in.
-- Later, we will restrict login to **@yale.edu** email addresses only.
-
----
-
-## **Features**
-
-### **1. Create a Post (Lost or Found)**
-
-Users can submit a post describing an item, including:
-
-- Whether it is **Lost** or **Found**
-- **Title and description**
-- **Location and date**
-- **Multiple images** (photos are uploaded and displayed on the card)
-
-### **2. Lost/Found Board**
-
-All active posts appear on the main board:
-
-- **Lost items** are highlighted in red
-- **Found items** are highlighted in green
-- Posts update **in real time** when status changes
-
-### **3. Contact the User Who Made a Given Post**
-
-Every post includes a **contact option**:
-
-- If you found something someone lost → you can email the original poster
-- If someone found what _you_ lost → you can claim it
-- Future feature: In-app messaging
+- **Google Sign-In** - Authenticate with your Google account
+- **Post Lost/Found Items** - Create posts with title, description, location, date, and images
+- **Browse Board** - View all active posts (lost items in red, found items in green)
+- **Real-Time Updates** - See posts update live as their status changes
+- **Contact Posters** - Email users directly about their posts

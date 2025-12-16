@@ -221,7 +221,7 @@ export default function MessagesLayout() {
         <div className="col-span-1 flex flex-col overflow-hidden md:col-span-1">
           <div className="flex flex-1 flex-col overflow-hidden rounded-xl border border-gray-300 bg-white shadow-2xl">
             {/* Requests area */}
-            <div className="flex-shrink-0 border-b-2 border-gray-200 px-6 py-4">
+            <div className="shrink-0 border-b-2 border-gray-200 px-6 py-4">
               <h3 className="text-lg font-bold text-gray-900">Requests</h3>
               <div className="mt-2">
                 <div className="flex flex-col gap-2">
@@ -390,7 +390,7 @@ export default function MessagesLayout() {
               </div>
             </div>
 
-            <div className="flex flex-shrink-0 items-center justify-between border-b-2 border-gray-200 px-6 py-4">
+            <div className="flex shrink-0 items-center justify-between border-b-2 border-gray-200 px-6 py-4">
               <h3 className="text-lg font-bold text-gray-900">Conversations</h3>
               <div className="relative">
                 <button
