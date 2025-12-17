@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { id: string } | Promise<{ id: string }> },
 ) {
   try {
-    const convId = (await params).id;
+    const { id: convId } = await params;
     const supabase = await createClient();
     const { data: messages } = await supabase
       .from("messages")
@@ -15,10 +15,11 @@ export async function GET(
       .order("created_at", { ascending: true });
 
     return NextResponse.json(messages || []);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
+    const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { error: err.message || String(err) },
+      { error: message },
       { status: 500 },
     );
   }
@@ -29,17 +30,12 @@ export async function POST(
   { params }: { params: { id: string } | Promise<{ id: string }> },
 ) {
   try {
-    const convId = (await params).id;
+    const { id: convId } = await params;
     const body = await request.json();
     const { body: text } = body;
-    const attachments = body.attachments || [];
-    // allow messages that have body or attachments
-    if (
-      (!text || String(text).trim() === "") &&
-      (!attachments || attachments.length === 0)
-    ) {
+    if (!text || String(text).trim() === "") {
       return NextResponse.json(
-        { error: "Missing body or attachments" },
+        { error: "Missing body" },
         { status: 400 },
       );
     }
@@ -71,36 +67,18 @@ export async function POST(
       .select()
       .single();
 
-    // insert attachments if provided (attachments should include url, filename, content_type)
-    if (attachments && attachments.length > 0 && data && data.id) {
-      const rows = attachments.map((a: any) => ({
-        message_id: data.id,
-        url: a.url,
-        filename: a.filename || a.name || null,
-        content_type: a.content_type || a.mime || null,
-      }));
-      await supabase.from("message_attachments").insert(rows);
-      // fetch inserted attachments and attach to response
-      const { data: inserted } = await supabase
-        .from("message_attachments")
-        .select("*")
-        .eq("message_id", data.id);
-      (data as any).attachments = inserted || [];
-    } else {
-      (data as any).attachments = [];
-    }
-
     // update conversation last_message_at
     await supabase
       .from("conversations")
       .update({ last_message_at: new Date().toISOString() })
       .eq("id", convId);
 
-    return NextResponse.json(data);
-  } catch (err: any) {
+    return NextResponse.json(data, { status: 201 });
+  } catch (err: unknown) {
     console.error(err);
+    const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json(
-      { error: err.message || String(err) },
+      { error: message },
       { status: 500 },
     );
   }

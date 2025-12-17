@@ -38,6 +38,7 @@ The app will run on `http://localhost:3000`
 
 - **Google Sign-In** - Authenticate with your Google account
 - **Post Lost/Found Items** - Create posts with title, description, location, date, and images
-- **Browse Board** - View all active posts (lost items in red, found items in green)
+- **Browse Board** - View all active posts (lost items in red, found items in green), with search and filter tools to quickly narrow down relevant items
 - **Real-Time Updates** - See posts update live as their status changes
-- **Contact Posters** - Email users directly about their posts
+- **Contact Posters** - One-click contact button to automatically draft a direct
+- **Location Statistics** - Statistics for the locations for which the most items are lost

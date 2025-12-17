@@ -19,7 +19,6 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const supabase = createClient();
@@ -64,89 +63,14 @@ const ConversationView = ({ conversationId }: { conversationId: string }) => {
   }, [conversationId]);
 
   const send = async () => {
-    if (!text.trim() && files.length === 0) return;
+    if (!text.trim()) return;
     try {
-      // upload files first (if any)
-      const attachments: Array<{
-        url: string;
-        filename: string;
-        content_type?: string;
-      }> = [];
-      for (const file of files) {
-        const fileName = `${Date.now()}_${file.name.replaceAll(" ", "_")}`;
-        const path = `attachments/${conversationId}/${encodeURIComponent(fileName)}`;
-        // try the 'attachments' bucket first
-        let uploadError = null;
-        try {
-          const { error } = await supabase.storage
-            .from("attachments")
-            .upload(path, file);
-          if (error) throw error;
-          const { data } = supabase.storage
-            .from("attachments")
-            .getPublicUrl(path);
-          attachments.push({
-            url: data.publicUrl,
-            filename: file.name,
-            content_type: file.type,
-          });
-          continue;
-        } catch (err: any) {
-          uploadError = err;
-          console.warn(
-            "attachments bucket upload failed:",
-            err?.message || err,
-          );
-        }
-
-        // fallback: try the 'photos' bucket if attachments bucket is missing
-        if (
-          String(uploadError?.message || "")
-            .toLowerCase()
-            .includes("bucket not found") ||
-          String(uploadError || "")
-            .toLowerCase()
-            .includes("bucket not found")
-        ) {
-          try {
-            const altPath = `${conversationId}/${encodeURIComponent(fileName)}`;
-            const { error } = await supabase.storage
-              .from("photos")
-              .upload(altPath, file);
-            if (error) throw error;
-            const { data } = supabase.storage
-              .from("photos")
-              .getPublicUrl(altPath);
-            attachments.push({
-              url: data.publicUrl,
-              filename: file.name,
-              content_type: file.type,
-            });
-            continue;
-          } catch (err2: any) {
-            console.warn(
-              "photos bucket fallback failed:",
-              err2?.message || err2,
-            );
-            alert(
-              "File upload failed: no suitable storage bucket found. Please create a public 'attachments' bucket in Supabase, or contact the developer.",
-            );
-            continue;
-          }
-        }
-
-        // other upload error: log and continue
-        console.error(uploadError);
-        alert("File upload failed. See console for details.");
-      }
-
       await fetch(`/api/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: text, attachments }),
+        body: JSON.stringify({ body: text }),
       });
       setText("");
-      setFiles([]);
       loadMessages();
     } catch (err) {
       console.error(err);

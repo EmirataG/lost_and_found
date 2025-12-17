@@ -12,14 +12,15 @@ export async function POST(request: Request) {
 
     const { data } = await supabase
       .from("connections")
-      .select("id,user_id,friend_id")
-      .or(`(user_id.eq.${user.id},friend_id.eq.${other_user_id})`)
-      .or(`(user_id.eq.${other_user_id},friend_id.eq.${user.id})`)
+      .select("id")
+      .or(
+        `and(user_id.eq.${user.id},friend_id.eq.${other_user_id}),and(user_id.eq.${other_user_id},friend_id.eq.${user.id})`,
+      )
       .limit(1);
 
     const connected = !!(data && data.length > 0);
     return NextResponse.json({ connected });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
     return NextResponse.json({ connected: false });
   }

@@ -26,9 +26,10 @@ export async function POST(request: Request) {
       const u2 = reqRow.receiver_id;
       const { data: existing } = await supabase
         .from("connections")
-        .select("id,user_id,friend_id")
-        .or(`(user_id.eq.${u1},friend_id.eq.${u2})`)
-        .or(`(user_id.eq.${u2},friend_id.eq.${u1})`)
+        .select("id")
+        .or(
+          `and(user_id.eq.${u1},friend_id.eq.${u2}),and(user_id.eq.${u2},friend_id.eq.${u1})`,
+        )
         .limit(1);
 
       if (!existing || existing.length === 0) {
@@ -42,8 +43,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
-    return NextResponse.json({ error: err.message || String(err) }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

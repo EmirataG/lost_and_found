@@ -19,19 +19,29 @@ export async function GET() {
       );
     }
 
-    // Count frequency of each location
-    const locationFrequency: Record<string, number> = {};
+    // Count frequency of each location with case-insensitive grouping
+    // Keep the first observed casing as the display name
+    const locationFrequency: Record<string, { displayName: string; count: number }> = {};
     
     posts?.forEach((post) => {
       const location = post.where?.trim();
       if (location) {
-        locationFrequency[location] = (locationFrequency[location] || 0) + 1;
+        const normalizedKey = location.toLowerCase();
+        
+        if (locationFrequency[normalizedKey]) {
+          locationFrequency[normalizedKey].count += 1;
+        } else {
+          locationFrequency[normalizedKey] = {
+            displayName: location,
+            count: 1
+          };
+        }
       }
     });
 
     // Convert to array and sort by frequency (descending)
-    const sortedLocations = Object.entries(locationFrequency)
-      .map(([location, count]) => ({ location, count }))
+    const sortedLocations = Object.values(locationFrequency)
+      .map(({ displayName, count }) => ({ location: displayName, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10); // Get top 10
 
